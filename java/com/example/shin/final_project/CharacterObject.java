@@ -18,7 +18,7 @@ public class CharacterObject extends SurfaceView{
     private boolean firstcheck = true;
     private float runSpeed = 1500;
     private int frameWidth = 222, frameHeight = 300;
-    private float Xpos = 10, Ypos = 10;
+    private float Xpos = 10, Ypos = 10, XRight = 0, YBottom = 0;
     private int framecount = 20;
     private int currentFrame = 0;
     private long fps;
@@ -38,7 +38,11 @@ public class CharacterObject extends SurfaceView{
         if(firstcheck) {
             getH();
         }
-        whereToDraw.set((int)Xpos,(int)Ypos,(int)Xpos+frameWidth,(int)Ypos+frameHeight);
+
+        XRight = Xpos + frameWidth;
+        YBottom = Ypos + frameHeight;
+
+        whereToDraw.set((int)Xpos,(int)Ypos,(int)XRight,(int)YBottom);
         canvas.drawBitmap(obj,frameToDraw,whereToDraw,null);
     }
     public void getH(){
@@ -167,5 +171,21 @@ public class CharacterObject extends SurfaceView{
 
     public void setFrameLengthInMillisecond(int frameLengthInMillisecond) {
         this.frameLengthInMillisecond = frameLengthInMillisecond;
+    }
+
+    public float getXRight() {
+        return XRight;
+    }
+
+    public void setXRight(float XRight) {
+        this.XRight = XRight;
+    }
+
+    public float getYBottom() {
+        return YBottom;
+    }
+
+    public void setYBottom(float YBottom) {
+        this.YBottom = YBottom;
     }
 }

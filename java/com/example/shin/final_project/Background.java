@@ -16,7 +16,7 @@ public class Background extends SurfaceView{
     private boolean secondcheck = true;
     private float runSpeed = 1000;
     public int frameWidth , frameHeight;
-    private float Xpos = 0, Ypos = 0;
+    private float Xpos = 0, Ypos = 0, XRight = 0, YBottom = 0;
     private int framecount = 0;
     private int currentFrame = 0;
     private long fps;
@@ -30,14 +30,17 @@ public class Background extends SurfaceView{
         getwh();
         obj = BitmapFactory.decodeResource(getResources(),resource);
     }
-
     public void drawObj(){
         if(cvs.backG) {
             obj = Bitmap.createScaledBitmap(obj, canvas.getWidth(), canvas.getHeight(), false);
             cvs.backG = false;
             getwh();
         }
-        whereToDraw.set((int)Xpos,(int)Ypos,(int)Xpos + frameWidth,(int)Ypos+frameHeight);
+
+        XRight = Xpos + frameWidth;
+        YBottom = Ypos + frameHeight;
+
+        whereToDraw.set((int)Xpos,(int)Ypos,(int)XRight,(int)YBottom);
         canvas.drawBitmap(obj,null,whereToDraw,null);
     }
     public void getwh(){
@@ -167,4 +170,21 @@ public class Background extends SurfaceView{
     public void setFrameLengthInMillisecond(int frameLengthInMillisecond) {
         this.frameLengthInMillisecond = frameLengthInMillisecond;
     }
+
+    public float getXRight() {
+        return XRight;
+    }
+
+    public void setXRight(float XRight) {
+        this.XRight = XRight;
+    }
+
+    public float getYBottom() {
+        return YBottom;
+    }
+
+    public void setYBottom(float YBottom) {
+        this.YBottom = YBottom;
+    }
+
 }
