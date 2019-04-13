@@ -15,14 +15,14 @@ public class GameLayout extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_layout);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        deleteStatusBar();
+        setContentView(R.layout.activity_game_layout);
         gameLayout = findViewById(R.id.gameLayout);
         jumpBtn = findViewById(R.id.jump);
         atkBtn = findViewById(R.id.attack);
         gameView = new GameView(this);
         gameLayout.addView(gameView,0);
-        deleteStatusBar();
     }
     @Override
     protected void onResume() {

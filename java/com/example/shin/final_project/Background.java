@@ -5,9 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.view.SurfaceView;
-import android.widget.ImageView;
 
-import static com.example.shin.final_project.cvs.*;
+import static com.example.shin.final_project.cvs.canvas;
 
 public class Background extends SurfaceView{
     private Bitmap obj;
@@ -24,7 +23,7 @@ public class Background extends SurfaceView{
     private long lastFrameChangeTime;
     private int frameLengthInMillisecond = 100;
     private RectF whereToDraw = new RectF();
-    ImageView image;
+
     public Background(Context context, int resource) {
         super(context);
         getwh();

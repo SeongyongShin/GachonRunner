@@ -35,10 +35,12 @@ public class Ground extends SurfaceView{
         obj = BitmapFactory.decodeResource(getResources(),resource);
 
     }
+
     public void drawObj(){
         if(firstCheck){
             getwh(); firstCheck = false;
             frameWidth += num * 10;
+
             if(startGround){frameWidth = cvsWidth; startGround = false;}
             obj = Bitmap.createScaledBitmap(obj,frameWidth * framecount ,frameHeight,false);
             frameToDraw.bottom = frameHeight;
@@ -200,4 +202,21 @@ public class Ground extends SurfaceView{
     public static void setStartGround(boolean startGround) {
         Ground.startGround = startGround;
     }
+
+    public float getXRight() {
+        return XRight;
+    }
+
+    public void setXRight(float XRight) {
+        this.XRight = XRight;
+    }
+
+    public float getYBottom() {
+        return YBottom;
+    }
+
+    public void setYBottom(float YBottom) {
+        this.YBottom = YBottom;
+    }
+
 }
