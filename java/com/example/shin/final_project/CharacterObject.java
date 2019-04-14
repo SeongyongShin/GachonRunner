@@ -7,9 +7,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.SurfaceView;
 
-import static com.example.shin.final_project.cvs.canvas;
-import static com.example.shin.final_project.cvs.cvsHeight;
-import static com.example.shin.final_project.cvs.cvsWidth;
+import static com.example.shin.final_project.cvs.*;
 
 public class CharacterObject extends SurfaceView{
     private Bitmap obj;
