@@ -10,7 +10,15 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static com.example.shin.final_project.cvs.*;
+import static com.example.shin.final_project.cvs.canvas;
+import static com.example.shin.final_project.cvs.cvsHeight;
+import static com.example.shin.final_project.cvs.cvsWidth;
+import static com.example.shin.final_project.cvs.firstSet;
+import static com.example.shin.final_project.cvs.isAtck;
+import static com.example.shin.final_project.cvs.isBulletMoving;
+import static com.example.shin.final_project.cvs.isCheck;
+import static com.example.shin.final_project.cvs.ourHolder;
+import static com.example.shin.final_project.cvs.startGround1;
 
 public  class GameView extends SurfaceView implements Runnable, View.OnClickListener{
     Button jumpBtn , atkBtn;
@@ -24,25 +32,28 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     Background background2;
     Ground ground;
     Ground ground1;
+    Context c;
+    Bullet bullet = null;
     ArrayList<Ground> grounds = new ArrayList<Ground>();
 
     Random random = new Random();
 
     public GameView(Context context){
         super(context);
+        c = context;
         ourHolder = getHolder();
         jumpBtn = GameLayout.jumpBtn;
         atkBtn = GameLayout.atkBtn;
         jumpBtn.setOnClickListener(this);
         atkBtn.setOnClickListener(this);
 
-        horse1 = new CharacterObject(context,R.drawable.test);
-        background = new Background(context,R.drawable.metro2);
-        background2 = new Background(context,R.drawable.metro2);
+        horse1 = new CharacterObject(c,R.drawable.test);
+        background = new Background(c,R.drawable.metro2);
+        background2 = new Background(c,R.drawable.metro2);
         background2.setXpos(background.getObj().getWidth());
         background2.setFirstcheck(false);
-        ground = new Ground(context,R.drawable.goundtest);
-        ground1 = new Ground(context,R.drawable.goundtest);
+        ground = new Ground(c,R.drawable.goundtest);
+        ground1 = new Ground(c,R.drawable.goundtest);
         for(int i=0;i<5;i++) {
             grounds.add(i, ground1);
             grounds.get(i).num = random.nextInt()%5;
@@ -66,49 +77,18 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     public void update(){
 
         if(firstSet) {
-            cvsWidth = getWidth();
-            cvsHeight = getHeight();
-            firstSet = false;
+            cvsWidth = getWidth(); cvsHeight = getHeight(); firstSet = false;
         }
+        makeBackGround();
+        makeCharacter();
+        //makeGround();
 
-        //시작 땅
-        /*
-        if (startGround1) {
-            ground.setXpos(ground.getXpos() - (float)ground.getRunSpeed());
-            //if((ground.getXpos() + ground.getWidth())<=0) startGround1 = false;
-        }*/
-        //배경
-        if(background.isFirstcheck()){
-           background.setXpos(background.getXpos() - (float) 100);
-           background2.setXpos(background.frameWidth + background.getXpos());
-            if(background.frameWidth + background.getXpos() <= 0) {
-                background.setXpos(background2.getXpos() + background2.frameWidth);
-                background.setFirstcheck(false);
-            }
-        }else{
-            background2.setXpos(background2.getXpos() - (float) 100);
-            background.setXpos(background2.frameWidth + background2.getXpos());
-            if(background2.frameWidth + background2.getXpos() <= 0) {
-                background2.setXpos(background.getXpos() + background.frameWidth);
-                background.setFirstcheck(true);
-            }
-        }
-        //캐릭터
-        if(horse1.isJumpcheck()){
-            if(isCheck) {
-                    horse1.setYpos(horse1.getYpos() - horse1.getRunSpeed() / fps);
-                    if(horse1.getYpos() + horse1.getFrameHeight() <= (cvsHeight - horse1.getFrameHeight() - cvsHeight/6)){
-                        isCheck = false;
-                    }
-            }else{
-                    horse1.setYpos(horse1.getYpos() + horse1.getRunSpeed()/fps);
-                if(horse1.getYpos() >= cvsHeight - cvsHeight/6 - cvsHeight/5){
-                    isCheck = true;
-                    horse1.setJumpcheck(false);
-                    horse1.setFirstcheck(true);
-                }
-            }
-        }
+        if(isAtck && !isBulletMoving){
+            createBullet(c,R.drawable.bullet,(int)horse1.getXpos(),(int)horse1.getYpos(),
+                    (int)horse1.getXRight(),(int)horse1.getYBottom(),horse1.getFrameWidth());
+            isBulletMoving = true;}
+
+        if(isBulletMoving){ makeBullet(); }
 
     }
 
@@ -141,6 +121,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             }
             horse1.drawObj();
             if(startGround1)ground.drawObj();
+            if(bullet != null ){bullet.drawObj();}
             //for(int i=0;i<5;i++){grounds.get(i).drawObj();}
             ourHolder.unlockCanvasAndPost(canvas); // 잠금을 풀면 캔버스가 그려진다.
         }
@@ -173,9 +154,65 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         switch (v.getId()) {
             case R.id.jump : horse1.setJumpcheck(true);
                 break;
+            case R.id.attack : if(!isAtck && !isBulletMoving) isAtck = true;
+                break;
             default:
                 break;
 
         }
+    }
+    public void makeBackGround(){
+        //배경
+        if(background.isFirstcheck()){
+            background.setXpos(background.getXpos() - (float) 100);
+            background2.setXpos(background.frameWidth + background.getXpos());
+            if(background.frameWidth + background.getXpos() <= 0) {
+                background.setXpos(background2.getXpos() + background2.frameWidth);
+                background.setFirstcheck(false);
+            }
+        }else{
+            background2.setXpos(background2.getXpos() - (float) 100);
+            background.setXpos(background2.frameWidth + background2.getXpos());
+            if(background2.frameWidth + background2.getXpos() <= 0) {
+                background2.setXpos(background.getXpos() + background.frameWidth);
+                background.setFirstcheck(true);
+            }
+        }
+    }
+    public void makeCharacter(){
+        //캐릭터
+        if(horse1.isJumpcheck()){
+            if(isCheck) {
+                horse1.setYpos(horse1.getYpos() - horse1.getRunSpeed() / fps);
+                if(horse1.getYpos() + horse1.getFrameHeight() <= (cvsHeight - horse1.getFrameHeight() - cvsHeight/6)){
+                    isCheck = false;
+                }
+            }else{
+                horse1.setYpos(horse1.getYpos() + horse1.getRunSpeed()/fps);
+                if(horse1.getYpos() >= cvsHeight - cvsHeight/6 - cvsHeight/5){
+                    isCheck = true;
+                    horse1.setJumpcheck(false);
+                    horse1.setFirstcheck(true);
+                }
+            }
+        }
+    }
+    public void makeGround(){
+        //시작 땅
+        /*
+        if (startGround1) {
+            ground.setXpos(ground.getXpos() - (float)ground.getRunSpeed());
+            //if((ground.getXpos() + ground.getWidth())<=0) startGround1 = false;
+        }*/
+    }
+    public void createBullet(Context c, int resource, int x, int x1, int y, int y1, int w){
+        bullet = new Bullet(c,resource,x,x1,y,y1,w,ground.frameHeight);
+        isAtck = false;
+    }
+    public void makeBullet(){
+        bullet.setXpos(bullet.getXpos() + bullet.getRunSpeed()/fps);
+        //Log.d("asd","asd " + bullet.getXpos() + " w : " + bullet.getFrameWidth() + " h : " + bullet.getFrameHeight() );
+        if(bullet.getXpos() > cvsWidth){ bullet = null; isBulletMoving = false;}
+
     }
 }

@@ -17,7 +17,7 @@ public class Ground extends SurfaceView{
     private static boolean startGround = true;
     private float runSpeed = 1;
     public int frameWidth = 0 , frameHeight = 0 ;
-    private float Xpos = 0, Ypos = 0;
+    private float Xpos = 0, Ypos = 0, XRight = 0, YBottom = 0 ;
     private int framecount = 1;
     private int currentFrame = 0;
     private long fps;
@@ -35,23 +35,27 @@ public class Ground extends SurfaceView{
         obj = BitmapFactory.decodeResource(getResources(),resource);
 
     }
+
     public void drawObj(){
         if(firstCheck){
             getwh(); firstCheck = false;
             frameWidth += num * 10;
+
             if(startGround){frameWidth = cvsWidth; startGround = false;}
             obj = Bitmap.createScaledBitmap(obj,frameWidth * framecount ,frameHeight,false);
             frameToDraw.bottom = frameHeight;
         }
+        XRight = Xpos + frameWidth;
+        YBottom = Ypos + frameHeight;
         frameToDraw.left = currentFrame * frameWidth;
         frameToDraw.right = frameToDraw.left + frameWidth;
-        whereToDraw.set((int)Xpos,(int)Ypos - frameHeight,(int)Xpos+frameWidth,cvsHeight);
+        whereToDraw.set((int)Xpos,(int)Ypos,(int)XRight,(int)YBottom);
         canvas.drawBitmap(obj,frameToDraw,whereToDraw,null);
     }
     public void getwh() {
         this.frameWidth = cvsWidth/percent;
         this.frameHeight = cvsHeight/5;
-        Ypos = cvsHeight;
+        Ypos = cvsHeight-frameHeight;
     }
 
     public Bitmap getObj() {
@@ -198,4 +202,21 @@ public class Ground extends SurfaceView{
     public static void setStartGround(boolean startGround) {
         Ground.startGround = startGround;
     }
+
+    public float getXRight() {
+        return XRight;
+    }
+
+    public void setXRight(float XRight) {
+        this.XRight = XRight;
+    }
+
+    public float getYBottom() {
+        return YBottom;
+    }
+
+    public void setYBottom(float YBottom) {
+        this.YBottom = YBottom;
+    }
+
 }
