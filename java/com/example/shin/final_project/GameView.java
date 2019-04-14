@@ -10,15 +10,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static com.example.shin.final_project.cvs.canvas;
-import static com.example.shin.final_project.cvs.cvsHeight;
-import static com.example.shin.final_project.cvs.cvsWidth;
-import static com.example.shin.final_project.cvs.firstSet;
-import static com.example.shin.final_project.cvs.isAtck;
-import static com.example.shin.final_project.cvs.isBulletMoving;
-import static com.example.shin.final_project.cvs.isCheck;
-import static com.example.shin.final_project.cvs.ourHolder;
-import static com.example.shin.final_project.cvs.startGround1;
+import static com.example.shin.final_project.cvs.*;
 
 public  class GameView extends SurfaceView implements Runnable, View.OnClickListener{
     Button jumpBtn , atkBtn;
@@ -27,12 +19,13 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     private long thisTimeFrame;
     private float fps;
     private boolean startGame = true;
-    CharacterObject horse1;
+    CharacterObject mainCharacter;
     Background background;
     Background background2;
     Ground ground;
     Ground ground1;
     Context c;
+    EnemyObject enemy1;
     Bullet bullet = null;
     ArrayList<Ground> grounds = new ArrayList<Ground>();
 
@@ -47,18 +40,18 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         jumpBtn.setOnClickListener(this);
         atkBtn.setOnClickListener(this);
 
-        horse1 = new CharacterObject(c,R.drawable.test);
         background = new Background(c,R.drawable.metro2);
         background2 = new Background(c,R.drawable.metro2);
         background2.setXpos(background.getObj().getWidth());
         background2.setFirstcheck(false);
         ground = new Ground(c,R.drawable.goundtest);
         ground1 = new Ground(c,R.drawable.goundtest);
+        enemy1 = new EnemyObject(c,R.drawable.enemy1);
+        mainCharacter = new CharacterObject(c,R.drawable.test);
         for(int i=0;i<5;i++) {
             grounds.add(i, ground1);
             grounds.get(i).num = random.nextInt()%5;
         }
-
     }
 
     @Override
@@ -82,10 +75,10 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         makeBackGround();
         makeCharacter();
         //makeGround();
-
+        if(isEnemyMoving){makeEnemy();}
         if(isAtck && !isBulletMoving){
-            createBullet(c,R.drawable.bullet,(int)horse1.getXpos(),(int)horse1.getYpos(),
-                    (int)horse1.getXRight(),(int)horse1.getYBottom(),horse1.getFrameWidth());
+            createBullet(c,R.drawable.bullet,(int)mainCharacter.getXpos(),(int)mainCharacter.getYpos(),
+                    (int)mainCharacter.getXRight(),(int)mainCharacter.getYBottom(),mainCharacter.getFrameWidth());
             isBulletMoving = true;}
 
         if(isBulletMoving){ makeBullet(); }
@@ -95,14 +88,20 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     public void manageCurrentFrame(){
         long time = System.currentTimeMillis();
 
-        if(horse1.isMoving()){
-            if(time > horse1.getLastFrameChangeTime() + horse1.getFrameLengthInMillisecond()){
+        if(mainCharacter.isMoving()){
+            if(time > mainCharacter.getLastFrameChangeTime() + mainCharacter.getFrameLengthInMillisecond()){
 
-                horse1.setLastFrameChangeTime(time);
-                horse1.setCurrentFrame(horse1.getCurrentFrame()+1);
+                mainCharacter.setLastFrameChangeTime(time);
 
-                if(horse1.getCurrentFrame() >= horse1.getFramecount()){
-                    horse1.setCurrentFrame(0);
+                mainCharacter.setCurrentFrame(mainCharacter.getCurrentFrame() + 1);
+
+                if(mainCharacter.getCurrentFrame() >= mainCharacter.getFramecount()){
+                    mainCharacter.setCurrentFrame(0);
+                    if(mainCharacter.getCurrentHFrame() == 1){
+                        mainCharacter.setCurrentHFrame(0);
+                    }else{
+                        mainCharacter.setCurrentHFrame(1);
+                    }
                 }
             }
         }
@@ -119,9 +118,10 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                 background2.setwh(background.frameWidth,background.frameHeight);
                 background2.setSecondcheck(false);
             }
-            horse1.drawObj();
-            if(startGround1)ground.drawObj();
+            mainCharacter.drawObj();
+            if(startGround1){ground.drawObj();}
             if(bullet != null ){bullet.drawObj();}
+            if(enemy1 != null ){enemy1.drawObj();}
             //for(int i=0;i<5;i++){grounds.get(i).drawObj();}
             ourHolder.unlockCanvasAndPost(canvas); // 잠금을 풀면 캔버스가 그려진다.
         }
@@ -152,7 +152,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.jump : horse1.setJumpcheck(true);
+            case R.id.jump : mainCharacter.setJumpcheck(true);
                 break;
             case R.id.attack : if(!isAtck && !isBulletMoving) isAtck = true;
                 break;
@@ -181,18 +181,23 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     }
     public void makeCharacter(){
         //캐릭터
-        if(horse1.isJumpcheck()){
+        if(mainCharacter.isJumpcheck()){
             if(isCheck) {
-                horse1.setYpos(horse1.getYpos() - horse1.getRunSpeed() / fps);
-                if(horse1.getYpos() + horse1.getFrameHeight() <= (cvsHeight - horse1.getFrameHeight() - cvsHeight/6)){
+                if(mainCharacter.isJumping()) {
+                    mainCharacter.setCurrentHeight(mainCharacter.getYpos());
+                    mainCharacter.setJumping(false);
+                }
+                mainCharacter.setYpos(mainCharacter.getYpos() - mainCharacter.getRunSpeed() / fps);
+                if(mainCharacter.getYBottom()< mainCharacter.getCurrentHeight()){
                     isCheck = false;
                 }
             }else{
-                horse1.setYpos(horse1.getYpos() + horse1.getRunSpeed()/fps);
-                if(horse1.getYpos() >= cvsHeight - cvsHeight/6 - cvsHeight/5){
+                mainCharacter.setYpos(mainCharacter.getYpos() + mainCharacter.getRunSpeed()/fps);
+                if(mainCharacter.getYpos() > mainCharacter.getCurrentHeight()){
                     isCheck = true;
-                    horse1.setJumpcheck(false);
-                    horse1.setFirstcheck(true);
+                    mainCharacter.setJumpcheck(false);
+                    mainCharacter.setFirstcheck(true);
+                    mainCharacter.setJumping(true);
                 }
             }
         }
@@ -215,4 +220,27 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         if(bullet.getXpos() > cvsWidth){ bullet = null; isBulletMoving = false;}
 
     }
+    public void makeEnemy(){
+        if(enemy1 != null){enemy1.setXpos(enemy1.getXpos()-enemy1.getRunSpeed()/fps);}
+        try{
+            if(enemy1 != null &&(enemy1.getXpos()<mainCharacter.getXRight())){
+                enemy1.setXpos(cvsWidth - enemy1.getFrameWidth());
+            }
+            if(bullet.getXpos()>enemy1.getXpos()){
+                if(bullet.getYBottom()<enemy1.getYpos()
+                        ||bullet.getYpos()>enemy1.getYBottom()){
+                }else{
+                    enemy1.isMoving =false;
+                    isBulletMoving = false;
+                    bullet = null;
+                    enemy1.setXpos(cvsWidth - enemy1.getFrameWidth());
+                }
+            }
+
+        }catch (Exception e){
+
+        }
+
+    }
+
 }

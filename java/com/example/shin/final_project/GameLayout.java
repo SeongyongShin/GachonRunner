@@ -1,12 +1,13 @@
 package com.example.shin.final_project;
 
-import android.content.pm.ActivityInfo;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import static com.example.shin.final_project.cvs.*;
 
 public class GameLayout extends AppCompatActivity {
     private GameView gameView;
@@ -15,7 +16,6 @@ public class GameLayout extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         deleteStatusBar();
         setContentView(R.layout.activity_game_layout);
         gameLayout = findViewById(R.id.gameLayout);
@@ -27,22 +27,25 @@ public class GameLayout extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        deleteStatusBar();
-        gameView.resume();
+        setting(false);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setting(false);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        deleteStatusBar();
-        gameView.pause();
+        setting(true);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        deleteStatusBar();
-        gameView.pause();
+        setting(true);
     }
 
     private void deleteStatusBar(){
@@ -56,5 +59,12 @@ public class GameLayout extends AppCompatActivity {
             uiOption |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility( uiOption );
     }
-
+    public void setting(boolean p){
+        backG = true;
+        startGround1 = true;
+        startGround = true;
+        deleteStatusBar();
+        if(p)gameView.pause();
+        else gameView.resume();
+    }
 }
