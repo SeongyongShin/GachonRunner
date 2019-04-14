@@ -12,4 +12,6 @@ public class cvs {
     public static boolean firstSet = true;
     public static int cvsWidth;
     public static int cvsHeight;
+    public static boolean isAtck = false;
+    public static boolean isBulletMoving = false;
 }
