@@ -10,14 +10,16 @@
         android:supportsRtl="true"
         android:configChanges="orientation"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GameLayout"></activity>
+        <activity android:name=".GameLayout"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>

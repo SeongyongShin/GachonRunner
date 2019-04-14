@@ -16,14 +16,25 @@ public class CharacterObject extends SurfaceView{
     public boolean isMoving = true;
     private boolean jumpcheck = false;
     private boolean firstcheck = true;
+
+    private boolean isJumping = true;
     private float runSpeed = 1500;
     private int frameWidth = 222, frameHeight = 300;
     private float Xpos = 10, Ypos = 10, XRight = 0, YBottom = 0;
-    private int framecount = 20;
+    private int framecount = 9;
+    private int frameHcount = 2;
     private int currentFrame = 0;
+    private int currentHFrame = 0;
+    private float currentHeight =0;
     private long fps;
     private long thisTimeFrame;
     private long lastFrameChangeTime;
+
+
+    public void setCurrentHFrame(int currentHFrame) {
+        this.currentHFrame = currentHFrame;
+    }
+
     private int frameLengthInMillisecond = 100;
     private Rect frameToDraw = new Rect(0,0,300/*frameWidth*/, 300/*frameHeight*/);
     private RectF whereToDraw = new RectF();
@@ -35,6 +46,8 @@ public class CharacterObject extends SurfaceView{
     public void drawObj(){
         frameToDraw.left = currentFrame * frameWidth;
         frameToDraw.right = frameToDraw.left + frameWidth;
+        frameToDraw.top = currentHFrame * frameHeight;
+        frameToDraw.bottom = frameToDraw.top + frameHeight;
         if(firstcheck) {
             getH();
         }
@@ -46,11 +59,11 @@ public class CharacterObject extends SurfaceView{
         canvas.drawBitmap(obj,frameToDraw,whereToDraw,null);
     }
     public void getH(){
-            Ypos = cvsHeight - cvsHeight/6 - cvsHeight/5;
+            Ypos = cvsHeight - frameHeight - cvsHeight/5;
             firstcheck = false;
             frameWidth = cvsWidth/10;
             Xpos = frameWidth;
-             obj = Bitmap.createScaledBitmap(obj,frameWidth * framecount ,cvsHeight/6,false);
+             obj = Bitmap.createScaledBitmap(obj,frameWidth * framecount ,frameHeight * frameHcount,false);
     }
 
     public Bitmap getObj() {
@@ -187,5 +200,34 @@ public class CharacterObject extends SurfaceView{
 
     public void setYBottom(float YBottom) {
         this.YBottom = YBottom;
+    }
+
+    public int getCurrentHFrame() {
+        return currentHFrame;
+    }
+
+    public int getFrameHcount() {
+        return frameHcount;
+    }
+
+    public void setFrameHcount(int frameHcount) {
+        this.frameHcount = frameHcount;
+    }
+
+    public float getCurrentHeight() {
+        return currentHeight;
+    }
+
+    public void setCurrentHeight(float currentHeight) {
+        this.currentHeight = currentHeight;
+    }
+
+
+    public boolean isJumping() {
+        return isJumping;
+    }
+
+    public void setJumping(boolean jumping) {
+        isJumping = jumping;
     }
 }

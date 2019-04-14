@@ -9,9 +9,12 @@ public class cvs {
     public static boolean isCheck = true;
     public static boolean backG = true;
     public static boolean startGround1 = true;
+    public static boolean startGround = true;
     public static boolean firstSet = true;
     public static int cvsWidth;
     public static int cvsHeight;
     public static boolean isAtck = false;
     public static boolean isBulletMoving = false;
+    public static boolean isEnemyMoving = true;
+    public static int percent = 10;
 }

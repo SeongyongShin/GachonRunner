@@ -13,8 +13,6 @@ public class Ground extends SurfaceView{
     private Bitmap obj;
     public boolean isMoving = true;
     public boolean firstCheck = true;
-
-    private static boolean startGround = true;
     private float runSpeed = 1;
     public int frameWidth = 0 , frameHeight = 0 ;
     private float Xpos = 0, Ypos = 0, XRight = 0, YBottom = 0 ;
@@ -26,7 +24,6 @@ public class Ground extends SurfaceView{
     private int frameLengthInMillisecond = 100;
     private RectF whereToDraw = new RectF();
     private Rect frameToDraw = new Rect();
-    private int percent = 10;
     public int num=0;
 
 
@@ -186,21 +183,12 @@ public class Ground extends SurfaceView{
         this.frameToDraw = frameToDraw;
     }
 
-    public int getPercent() {
-        return percent;
-    }
-
-    public void setPercent(int percent) {
-        this.percent = percent;
-    }
-
-
     public static boolean isStartGround() {
         return startGround;
     }
 
     public static void setStartGround(boolean startGround) {
-        Ground.startGround = startGround;
+        startGround = startGround;
     }
 
     public float getXRight() {
