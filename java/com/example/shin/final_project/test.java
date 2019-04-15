@@ -9,35 +9,26 @@ import android.view.SurfaceView;
 
 import static com.example.shin.final_project.cvs.*;
 
-public class CharacterObject extends SurfaceView{
+public class test extends SurfaceView{
     private Bitmap obj;
-    public boolean isMoving = true;
-    private boolean jumpcheck = false;
-    private boolean firstcheck = true;
-    private boolean isJumping = true;
     private float runSpeed = 1500;
-    private int frameWidth = 222, frameHeight = 300;
+    private int frameWidth = 150, frameHeight = 150;
     private float Xpos = 10, Ypos = 10, XRight = 0, YBottom = 0;
     private int framecount = 9;
     private int frameHcount = 2;
     private int currentFrame = 0;
     private int currentHFrame = 0;
-    private float currentHeight =0;
     private long fps;
     private long thisTimeFrame;
     private long lastFrameChangeTime;
-
-
-    public void setCurrentHFrame(int currentHFrame) {
-        this.currentHFrame = currentHFrame;
-    }
-
     private int frameLengthInMillisecond = 100;
     private Rect frameToDraw = new Rect(0,0,300/*frameWidth*/, 300/*frameHeight*/);
     private RectF whereToDraw = new RectF();
-    public CharacterObject(Context context, int resource) {
+
+    public test(Context context, int resource) {
         super(context);
         obj = BitmapFactory.decodeResource(getResources(),resource);
+        obj = Bitmap.createScaledBitmap(obj,frameWidth * framecount ,frameHeight * frameHcount,false);
     }
 
     public void drawObj(){
@@ -45,24 +36,11 @@ public class CharacterObject extends SurfaceView{
         frameToDraw.right = frameToDraw.left + frameWidth;
         frameToDraw.top = currentHFrame * frameHeight;
         frameToDraw.bottom = frameToDraw.top + frameHeight;
-        if(firstcheck) {
-            getH();
-        }
-
         XRight = Xpos + frameWidth;
         YBottom = Ypos + frameHeight;
-
-        whereToDraw.set((int)Xpos,(int)Ypos,(int)XRight,(int)YBottom);
+        whereToDraw.set(Xpos,Ypos,XRight,YBottom);
         canvas.drawBitmap(obj,frameToDraw,whereToDraw,null);
     }
-    public void getH(){
-            Ypos = cvsHeight - frameHeight - cvsHeight/5;
-            firstcheck = false;
-            frameWidth = cvsWidth/10;
-            Xpos = frameWidth;
-            obj = Bitmap.createScaledBitmap(obj,frameWidth * framecount ,frameHeight * frameHcount,false);
-    }
-
     public Bitmap getObj() {
         return obj;
     }
@@ -71,52 +49,12 @@ public class CharacterObject extends SurfaceView{
         this.obj = obj;
     }
 
-    public boolean isMoving() {
-        return isMoving;
-    }
-
-    public boolean isFirstcheck() {
-        return firstcheck;
-    }
-
-    public void setFirstcheck(boolean firstcheck) {
-        this.firstcheck = firstcheck;
-    }
-
-    public void setMoving(boolean moving) {
-        isMoving = moving;
-    }
-
-    public boolean isJumpcheck() {
-        return jumpcheck;
-    }
-
-    public void setJumpcheck(boolean jumpcheck) {
-        this.jumpcheck = jumpcheck;
-    }
-
     public float getRunSpeed() {
         return runSpeed;
     }
 
     public void setRunSpeed(float runSpeed) {
         this.runSpeed = runSpeed;
-    }
-
-    public float getXpos() {
-        return Xpos;
-    }
-
-    public void setXpos(float xpos) {
-        Xpos = xpos;
-    }
-
-    public float getYpos() {
-        return Ypos;
-    }
-
-    public void setYpos(float ypos) {
-        Ypos = ypos;
     }
 
     public int getFrameWidth() {
@@ -135,6 +73,38 @@ public class CharacterObject extends SurfaceView{
         this.frameHeight = frameHeight;
     }
 
+    public float getXpos() {
+        return Xpos;
+    }
+
+    public void setXpos(float xpos) {
+        Xpos = xpos;
+    }
+
+    public float getYpos() {
+        return Ypos;
+    }
+
+    public void setYpos(float ypos) {
+        Ypos = ypos;
+    }
+
+    public float getXRight() {
+        return XRight;
+    }
+
+    public void setXRight(float XRight) {
+        this.XRight = XRight;
+    }
+
+    public float getYBottom() {
+        return YBottom;
+    }
+
+    public void setYBottom(float YBottom) {
+        this.YBottom = YBottom;
+    }
+
     public int getFramecount() {
         return framecount;
     }
@@ -143,12 +113,24 @@ public class CharacterObject extends SurfaceView{
         this.framecount = framecount;
     }
 
+    public int getFrameHcount() {
+        return frameHcount;
+    }
+
+    public void setFrameHcount(int frameHcount) {
+        this.frameHcount = frameHcount;
+    }
+
     public int getCurrentFrame() {
         return currentFrame;
     }
 
     public void setCurrentFrame(int currentFrame) {
         this.currentFrame = currentFrame;
+    }
+
+    public int getCurrentHFrame() {
+        return currentHFrame;
     }
 
     public long getFps() {
@@ -183,48 +165,24 @@ public class CharacterObject extends SurfaceView{
         this.frameLengthInMillisecond = frameLengthInMillisecond;
     }
 
-    public float getXRight() {
-        return XRight;
+    public Rect getFrameToDraw() {
+        return frameToDraw;
     }
 
-    public void setXRight(float XRight) {
-        this.XRight = XRight;
+    public void setFrameToDraw(Rect frameToDraw) {
+        this.frameToDraw = frameToDraw;
     }
 
-    public float getYBottom() {
-        return YBottom;
+    public RectF getWhereToDraw() {
+        return whereToDraw;
     }
 
-    public void setYBottom(float YBottom) {
-        this.YBottom = YBottom;
+    public void setWhereToDraw(RectF whereToDraw) {
+        this.whereToDraw = whereToDraw;
     }
 
-    public int getCurrentHFrame() {
-        return currentHFrame;
+    public void setCurrentHFrame(int currentHFrame) {
+        this.currentHFrame = currentHFrame;
     }
 
-    public int getFrameHcount() {
-        return frameHcount;
-    }
-
-    public void setFrameHcount(int frameHcount) {
-        this.frameHcount = frameHcount;
-    }
-
-    public float getCurrentHeight() {
-        return currentHeight;
-    }
-
-    public void setCurrentHeight(float currentHeight) {
-        this.currentHeight = currentHeight;
-    }
-
-
-    public boolean isJumping() {
-        return isJumping;
-    }
-
-    public void setJumping(boolean jumping) {
-        isJumping = jumping;
-    }
 }

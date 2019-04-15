@@ -28,6 +28,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     EnemyObject enemy1;
     Bullet bullet = null;
     ArrayList<Ground> grounds = new ArrayList<Ground>();
+    test test;
 
     Random random = new Random();
 
@@ -48,6 +49,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         ground1 = new Ground(c,R.drawable.goundtest);
         enemy1 = new EnemyObject(c,R.drawable.enemy1);
         mainCharacter = new CharacterObject(c,R.drawable.test);
+        test = new test(c,R.drawable.test);
         for(int i=0;i<5;i++) {
             grounds.add(i, ground1);
             grounds.get(i).num = random.nextInt()%5;
@@ -89,19 +91,38 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         long time = System.currentTimeMillis();
 
         if(mainCharacter.isMoving()){
-            if(time > mainCharacter.getLastFrameChangeTime() + mainCharacter.getFrameLengthInMillisecond()){
+                if(time > mainCharacter.getLastFrameChangeTime() + mainCharacter.getFrameLengthInMillisecond()){
 
-                mainCharacter.setLastFrameChangeTime(time);
+                    mainCharacter.setLastFrameChangeTime(time);
 
-                mainCharacter.setCurrentFrame(mainCharacter.getCurrentFrame() + 1);
+                    mainCharacter.setCurrentFrame(mainCharacter.getCurrentFrame() + 1);
 
-                if(mainCharacter.getCurrentFrame() >= mainCharacter.getFramecount()){
-                    mainCharacter.setCurrentFrame(0);
-                    if(mainCharacter.getCurrentHFrame() == 1){
-                        mainCharacter.setCurrentHFrame(0);
-                    }else{
-                        mainCharacter.setCurrentHFrame(1);
+                    if(mainCharacter.getCurrentFrame() >= mainCharacter.getFramecount()){
+                        mainCharacter.setCurrentFrame(0);
+                        switch (mainCharacter.getCurrentHFrame()){
+                            case 0 : mainCharacter.setCurrentHFrame(1);
+                                break;
+                            case 1 : mainCharacter.setCurrentHFrame(0);
+                                break;
+                            case 2 : mainCharacter.setCurrentHFrame(0);
+                                break;
+                            default: break;
+                        }
                     }
+                }
+        }
+        if(time > test.getLastFrameChangeTime() + test.getFrameLengthInMillisecond()){
+
+            test.setLastFrameChangeTime(time);
+
+            test.setCurrentFrame(test.getCurrentFrame() + 1);
+
+            if(test.getCurrentFrame() >= test.getFramecount()){
+                test.setCurrentFrame(0);
+                if(test.getCurrentHFrame() == 1){
+                    test.setCurrentHFrame(0);
+                }else{
+                    test.setCurrentHFrame(1);
                 }
             }
         }
@@ -122,6 +143,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             if(startGround1){ground.drawObj();}
             if(bullet != null ){bullet.drawObj();}
             if(enemy1 != null ){enemy1.drawObj();}
+            test.drawObj();
             //for(int i=0;i<5;i++){grounds.get(i).drawObj();}
             ourHolder.unlockCanvasAndPost(canvas); // 잠금을 풀면 캔버스가 그려진다.
         }
