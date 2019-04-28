@@ -4,13 +4,14 @@
 
     <application
         android:allowBackup="true"
+        android:configChanges="orientation"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:configChanges="orientation"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,8 +19,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GameLayout"
-            android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".GameLayout"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".OptionActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/mystlye" />
+        <activity
+            android:name=".StageActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".GameEndActivity"
+            android:theme="@style/mystlye" />
     </application>
 
 </manifest>

@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
-
+    Intent intent;
     private GameView gameView;
     //private GameView1 gameView1;
     public cvs cvs = new cvs();
@@ -50,4 +50,17 @@ public class MainActivity extends AppCompatActivity {
         decorView.setSystemUiVisibility( uiOption );
     }
 
+    public void gameOption(View view) {
+        intent = new Intent(this, OptionActivity.class);
+        startActivityForResult(intent, 1);
+    }
+
+    public void exitGame(View view) {
+        finish();
+    }
+
+    public void selectStage(View view) {
+        intent = new Intent(this,StageActivity.class);
+        startActivity(intent);
+    }
 }

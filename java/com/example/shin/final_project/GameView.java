@@ -1,24 +1,34 @@
 package com.example.shin.final_project;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.example.shin.final_project.GameLayout.activity;
 import static com.example.shin.final_project.cvs.*;
 
 public  class GameView extends SurfaceView implements Runnable, View.OnClickListener{
     Button jumpBtn , atkBtn;
+    TextView gameTime;
     private Thread gameThread;
     private volatile boolean playing;
     private long thisTimeFrame;
     private float fps;
     private boolean startGame = true;
+    long startFrameTime, recentTime, oldTime;
+    private boolean timeFirst = true;
+    private int timecount = 0;
+    Handler handler;
     CharacterObject mainCharacter;
     Background background;
     Background background2;
@@ -28,7 +38,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     EnemyObject enemy1;
     Bullet bullet = null;
     ArrayList<Ground> grounds = new ArrayList<Ground>();
-    test test;
+    Intent intent;
 
     Random random = new Random();
 
@@ -38,9 +48,9 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         ourHolder = getHolder();
         jumpBtn = GameLayout.jumpBtn;
         atkBtn = GameLayout.atkBtn;
+        gameTime = GameLayout.gameTime;
         jumpBtn.setOnClickListener(this);
         atkBtn.setOnClickListener(this);
-
         background = new Background(c,R.drawable.metro2);
         background2 = new Background(c,R.drawable.metro2);
         background2.setXpos(background.getObj().getWidth());
@@ -49,7 +59,6 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         ground1 = new Ground(c,R.drawable.goundtest);
         enemy1 = new EnemyObject(c,R.drawable.enemy1);
         mainCharacter = new CharacterObject(c,R.drawable.test);
-        test = new test(c,R.drawable.test);
         for(int i=0;i<5;i++) {
             grounds.add(i, ground1);
             grounds.get(i).num = random.nextInt()%5;
@@ -59,18 +68,33 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     @Override
     public void run() {
         while(playing){
-            long startFrameTime= System.currentTimeMillis();
+            startFrameTime= System.currentTimeMillis();
+            oldTime = (startFrameTime/1000)%10000;
+            if(timeFirst){
+                recentTime = oldTime;
+                timeFirst = false;
+            }
             update();
             draw();
-
             thisTimeFrame = System.currentTimeMillis() - startFrameTime;
             if(thisTimeFrame >=1 ){
                 fps = 1000/thisTimeFrame;
             }
+            if((oldTime - recentTime) > 1 || (recentTime - oldTime) == 9) { // 1초마다 여기로 들어옴.
+                Log.d("second", " " + (oldTime - recentTime));
+                recentTime = oldTime;
+                timecount++;
+                if(timecount>10){
+                    playing =false;
+                    cvs.stage++;
+                    intent = new Intent(activity,GameEndActivity.class);
+                    activity.startActivity(intent);
+                }
+            }
+
         }
     }
     public void update(){
-
         if(firstSet) {
             cvsWidth = getWidth(); cvsHeight = getHeight(); firstSet = false;
         }
@@ -91,38 +115,19 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         long time = System.currentTimeMillis();
 
         if(mainCharacter.isMoving()){
-                if(time > mainCharacter.getLastFrameChangeTime() + mainCharacter.getFrameLengthInMillisecond()){
+            if(time > mainCharacter.getLastFrameChangeTime() + mainCharacter.getFrameLengthInMillisecond()){
 
-                    mainCharacter.setLastFrameChangeTime(time);
+                mainCharacter.setLastFrameChangeTime(time);
 
-                    mainCharacter.setCurrentFrame(mainCharacter.getCurrentFrame() + 1);
+                mainCharacter.setCurrentFrame(mainCharacter.getCurrentFrame() + 1);
 
-                    if(mainCharacter.getCurrentFrame() >= mainCharacter.getFramecount()){
-                        mainCharacter.setCurrentFrame(0);
-                        switch (mainCharacter.getCurrentHFrame()){
-                            case 0 : mainCharacter.setCurrentHFrame(1);
-                                break;
-                            case 1 : mainCharacter.setCurrentHFrame(0);
-                                break;
-                            case 2 : mainCharacter.setCurrentHFrame(0);
-                                break;
-                            default: break;
-                        }
+                if(mainCharacter.getCurrentFrame() >= mainCharacter.getFramecount()){
+                    mainCharacter.setCurrentFrame(0);
+                    if(mainCharacter.getCurrentHFrame() == 1){
+                        mainCharacter.setCurrentHFrame(0);
+                    }else{
+                        mainCharacter.setCurrentHFrame(1);
                     }
-                }
-        }
-        if(time > test.getLastFrameChangeTime() + test.getFrameLengthInMillisecond()){
-
-            test.setLastFrameChangeTime(time);
-
-            test.setCurrentFrame(test.getCurrentFrame() + 1);
-
-            if(test.getCurrentFrame() >= test.getFramecount()){
-                test.setCurrentFrame(0);
-                if(test.getCurrentHFrame() == 1){
-                    test.setCurrentHFrame(0);
-                }else{
-                    test.setCurrentHFrame(1);
                 }
             }
         }
@@ -143,7 +148,6 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             if(startGround1){ground.drawObj();}
             if(bullet != null ){bullet.drawObj();}
             if(enemy1 != null ){enemy1.drawObj();}
-            test.drawObj();
             //for(int i=0;i<5;i++){grounds.get(i).drawObj();}
             ourHolder.unlockCanvasAndPost(canvas); // 잠금을 풀면 캔버스가 그려진다.
         }
@@ -166,7 +170,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         switch (event.getAction() & MotionEvent.ACTION_MASK){
             case MotionEvent.ACTION_DOWN :
                 if(startGame) {gameThread.start(); startGame = false;}
-                    //horse1.setJumpcheck(true);
+                //horse1.setJumpcheck(true);
                 break;
         }
         return true;
