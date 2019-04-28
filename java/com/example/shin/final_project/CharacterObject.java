@@ -14,7 +14,6 @@ public class CharacterObject extends SurfaceView{
     public boolean isMoving = true;
     private boolean jumpcheck = false;
     private boolean firstcheck = true;
-
     private boolean isJumping = true;
     private float runSpeed = 1500;
     private int frameWidth = 222, frameHeight = 300;
@@ -61,7 +60,7 @@ public class CharacterObject extends SurfaceView{
             firstcheck = false;
             frameWidth = cvsWidth/10;
             Xpos = frameWidth;
-             obj = Bitmap.createScaledBitmap(obj,frameWidth * framecount ,frameHeight * frameHcount,false);
+            obj = Bitmap.createScaledBitmap(obj,frameWidth * framecount ,frameHeight * frameHcount,false);
     }
 
     public Bitmap getObj() {

@@ -31,7 +31,7 @@ public class Background extends SurfaceView{
     }
     public void drawObj(){
         if(cvs.backG) {
-            obj = Bitmap.createScaledBitmap(obj, canvas.getWidth(), canvas.getHeight(), false);
+            obj = Bitmap.createScaledBitmap(obj, cvsWidth, cvsHeight, false);
             cvs.backG = false;
             getwh();
         }

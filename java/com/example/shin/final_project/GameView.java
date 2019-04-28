@@ -1,24 +1,34 @@
 package com.example.shin.final_project;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.example.shin.final_project.GameLayout.activity;
 import static com.example.shin.final_project.cvs.*;
 
 public  class GameView extends SurfaceView implements Runnable, View.OnClickListener{
     Button jumpBtn , atkBtn;
+    TextView gameTime;
     private Thread gameThread;
     private volatile boolean playing;
     private long thisTimeFrame;
     private float fps;
     private boolean startGame = true;
+    long startFrameTime, recentTime, oldTime;
+    private boolean timeFirst = true;
+    private int timecount = 0;
+    Handler handler;
     CharacterObject mainCharacter;
     Background background;
     Background background2;
@@ -28,6 +38,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     EnemyObject enemy1;
     Bullet bullet = null;
     ArrayList<Ground> grounds = new ArrayList<Ground>();
+    Intent intent;
 
     Random random = new Random();
 
@@ -37,9 +48,9 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         ourHolder = getHolder();
         jumpBtn = GameLayout.jumpBtn;
         atkBtn = GameLayout.atkBtn;
+        gameTime = GameLayout.gameTime;
         jumpBtn.setOnClickListener(this);
         atkBtn.setOnClickListener(this);
-
         background = new Background(c,R.drawable.metro2);
         background2 = new Background(c,R.drawable.metro2);
         background2.setXpos(background.getObj().getWidth());
@@ -57,18 +68,33 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     @Override
     public void run() {
         while(playing){
-            long startFrameTime= System.currentTimeMillis();
+            startFrameTime= System.currentTimeMillis();
+            oldTime = (startFrameTime/1000)%10000;
+            if(timeFirst){
+                recentTime = oldTime;
+                timeFirst = false;
+            }
             update();
             draw();
-
             thisTimeFrame = System.currentTimeMillis() - startFrameTime;
             if(thisTimeFrame >=1 ){
                 fps = 1000/thisTimeFrame;
             }
+            if((oldTime - recentTime) > 1 || (recentTime - oldTime) == 9) { // 1초마다 여기로 들어옴.
+                Log.d("second", " " + (oldTime - recentTime));
+                recentTime = oldTime;
+                timecount++;
+                if(timecount>10){
+                    playing =false;
+                    cvs.stage++;
+                    intent = new Intent(activity,GameEndActivity.class);
+                    activity.startActivity(intent);
+                }
+            }
+
         }
     }
     public void update(){
-
         if(firstSet) {
             cvsWidth = getWidth(); cvsHeight = getHeight(); firstSet = false;
         }
@@ -144,21 +170,25 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         switch (event.getAction() & MotionEvent.ACTION_MASK){
             case MotionEvent.ACTION_DOWN :
                 if(startGame) {gameThread.start(); startGame = false;}
-                    //horse1.setJumpcheck(true);
+                //horse1.setJumpcheck(true);
                 break;
         }
         return true;
     }
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.jump : mainCharacter.setJumpcheck(true);
-                break;
-            case R.id.attack : if(!isAtck && !isBulletMoving) isAtck = true;
-                break;
-            default:
-                break;
+        if(playing) {
+            switch (v.getId()) {
+                case R.id.jump:
+                    mainCharacter.setJumpcheck(true);
+                    break;
+                case R.id.attack:
+                    if (!isAtck && !isBulletMoving) isAtck = true;
+                    break;
+                default:
+                    break;
 
+            }
         }
     }
     public void makeBackGround(){

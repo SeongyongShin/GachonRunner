@@ -1,28 +1,35 @@
 package com.example.shin.final_project;
 
+import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import static com.example.shin.final_project.cvs.*;
 
 public class GameLayout extends AppCompatActivity {
     private GameView gameView;
+    public static Activity activity;
     private ConstraintLayout gameLayout;
+    static TextView gameTime;
     static Button jumpBtn, atkBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = GameLayout.this;
         deleteStatusBar();
         setContentView(R.layout.activity_game_layout);
         gameLayout = findViewById(R.id.gameLayout);
+        gameTime = findViewById(R.id.time);
         jumpBtn = findViewById(R.id.jump);
         atkBtn = findViewById(R.id.attack);
         gameView = new GameView(this);
         gameLayout.addView(gameView,0);
+
     }
     @Override
     protected void onResume() {
@@ -67,4 +74,9 @@ public class GameLayout extends AppCompatActivity {
         if(p)gameView.pause();
         else gameView.resume();
     }
+    public void reMoveView(){
+        gameView = null;
+        finish();
+    }
+
 }
