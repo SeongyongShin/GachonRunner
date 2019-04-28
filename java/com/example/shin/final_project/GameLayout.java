@@ -1,6 +1,7 @@
 package com.example.shin.final_project;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -17,12 +18,15 @@ public class GameLayout extends AppCompatActivity {
     private ConstraintLayout gameLayout;
     static TextView gameTime;
     static Button jumpBtn, atkBtn;
+    public static int currentStage = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = GameLayout.this;
         deleteStatusBar();
         setContentView(R.layout.activity_game_layout);
+        Intent intent = getIntent();
+        intent.getIntExtra("stname",currentStage);
         gameLayout = findViewById(R.id.gameLayout);
         gameTime = findViewById(R.id.time);
         jumpBtn = findViewById(R.id.jump);

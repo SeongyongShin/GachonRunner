@@ -28,6 +28,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     long startFrameTime, recentTime, oldTime;
     private boolean timeFirst = true;
     private int timecount = 0;
+    private int currentStage = 1;
     Handler handler;
     CharacterObject mainCharacter;
     Background background;
@@ -59,6 +60,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         ground1 = new Ground(c,R.drawable.goundtest);
         enemy1 = new EnemyObject(c,R.drawable.enemy1);
         mainCharacter = new CharacterObject(c,R.drawable.test);
+        this.currentStage = GameLayout.currentStage;
         for(int i=0;i<5;i++) {
             grounds.add(i, ground1);
             grounds.get(i).num = random.nextInt()%5;
@@ -86,7 +88,9 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                 timecount++;
                 if(timecount>10){
                     playing =false;
-                    cvs.stage++;
+
+                    if(currentStage >= stage) stage++;
+
                     intent = new Intent(activity,GameEndActivity.class);
                     activity.startActivity(intent);
                 }
