@@ -40,6 +40,7 @@ public class StageActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()){
             case R.id.s1:
                 intent = new Intent(StageActivity.this,GameLayout.class);
+                intent.putExtra("stname",1);
                 startActivity(intent);
                 finish();
                 break;
