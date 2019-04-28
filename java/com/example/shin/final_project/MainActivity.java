@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void gameOption(View view) {
         intent = new Intent(this, OptionActivity.class);
-        startActivityForResult(intent, 1);
+        startActivity(intent);
     }
 
     public void exitGame(View view) {

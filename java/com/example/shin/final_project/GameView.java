@@ -177,14 +177,18 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     }
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.jump : mainCharacter.setJumpcheck(true);
-                break;
-            case R.id.attack : if(!isAtck && !isBulletMoving) isAtck = true;
-                break;
-            default:
-                break;
+        if(playing) {
+            switch (v.getId()) {
+                case R.id.jump:
+                    mainCharacter.setJumpcheck(true);
+                    break;
+                case R.id.attack:
+                    if (!isAtck && !isBulletMoving) isAtck = true;
+                    break;
+                default:
+                    break;
 
+            }
         }
     }
     public void makeBackGround(){
