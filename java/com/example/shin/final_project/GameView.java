@@ -59,7 +59,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         ground = new Ground(c,R.drawable.goundtest);
         ground1 = new Ground(c,R.drawable.goundtest);
         enemy1 = new EnemyObject(c,R.drawable.enemy1);
-        mainCharacter = new CharacterObject(c,R.drawable.shin);
+        mainCharacter = new CharacterObject(c,R.drawable.shin1);
         this.currentStage = GameLayout.currentStage;
         for(int i=0;i<5;i++) {
             grounds.add(i, ground1);
@@ -124,13 +124,13 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                 Log.d("asd"," : "+mainCharacter.getCurrentFrame() + " : " + mainCharacter.getFramecount());
 
                 mainCharacter.setLastFrameChangeTime(time);
-                if(mainCharacter.isJumpcheck()){
+                if(mainCharacter.isJumpcheck() && mainCharacter.getCurrentHFrame() != 3){
                     mainCharacter.setCurrentHFrame(1);
                 }else if(!mainCharacter.isJumpcheck() && mainCharacter.getCurrentHFrame() == 1){
                     mainCharacter.setCurrentHFrame(0);
                 }
                 if(mainCharacter.getCurrentHFrame() == 3){
-                    if(mainCharacter.getCurrentFrame() == 19){
+                    if(mainCharacter.getCurrentFrame() == 18){
                         Intent intent = new Intent(activity,GameOverActivity.class);
                         activity.startActivity(intent);
                     }
