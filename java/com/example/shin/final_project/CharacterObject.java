@@ -17,9 +17,11 @@ public class CharacterObject extends SurfaceView{
     private boolean isJumping = true;
     private float runSpeed = 1500;
     private int frameWidth = 222, frameHeight = 300;
+
     private float Xpos = 10, Ypos = 10, XRight = 0, YBottom = 0;
-    private int framecount = 9;
-    private int frameHcount = 2;
+    private int framecount = 20;
+    private int frameHcount = 4;
+    private int currentStatus = 1;
     private int currentFrame = 0;
     private int currentHFrame = 0;
     private float currentHeight =0;
@@ -227,4 +229,14 @@ public class CharacterObject extends SurfaceView{
     public void setJumping(boolean jumping) {
         isJumping = jumping;
     }
+
+
+    public int getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public void setCurrentStatus(int currentStatus) {
+        this.currentStatus = currentStatus;
+    }
 }
+

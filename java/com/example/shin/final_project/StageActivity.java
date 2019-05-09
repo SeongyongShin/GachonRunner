@@ -1,8 +1,10 @@
 package com.example.shin.final_project;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -17,11 +19,22 @@ public class StageActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
         deleteStatusBar();
+        Context context = getApplicationContext();
         s1 = findViewById(R.id.s1); s1.setOnClickListener(this);
         s2 = findViewById(R.id.s2); s2.setOnClickListener(this);
         s3 = findViewById(R.id.s3); s3.setOnClickListener(this);
         s4 = findViewById(R.id.s4); s4.setOnClickListener(this);
         m1 = findViewById(R.id.m1); m1.setOnClickListener(this);
+        switch (cvs.stage){
+            case 1 : break;
+            case 2 : s2.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.btn_stage2));
+            break;
+            case 3 : s3.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.btn_stage3));
+            break;
+            case 4 : s2.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.btn_stage4));
+            break;
+            default:break;
+        }
     }
     private void deleteStatusBar(){
         View decorView = getWindow().getDecorView();

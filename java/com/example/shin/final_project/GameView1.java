@@ -24,8 +24,6 @@ public  class GameView1 extends SurfaceView implements Runnable{
         super(context);
         ourHolder = getHolder();
 
-        horse1 = new CharacterObject(context,R.drawable.test);
-
     }
 
     @Override

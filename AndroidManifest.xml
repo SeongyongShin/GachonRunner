@@ -29,7 +29,10 @@
         <activity
             android:name=".StageActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".GameEndActivity"
+        <activity
+            android:name=".GameEndActivity"
+            android:theme="@style/mystlye" />
+        <activity android:name=".GameOverActivity"
             android:theme="@style/mystlye" />
     </application>
 

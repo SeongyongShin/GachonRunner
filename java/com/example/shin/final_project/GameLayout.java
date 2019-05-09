@@ -18,15 +18,17 @@ public class GameLayout extends AppCompatActivity {
     private ConstraintLayout gameLayout;
     static TextView gameTime;
     static Button jumpBtn, atkBtn;
-    public static int currentStage = 0;
+    public static int currentStage = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = GameLayout.this;
         deleteStatusBar();
         setContentView(R.layout.activity_game_layout);
-        Intent intent = getIntent();
-        intent.getIntExtra("stname",currentStage);
+        try {
+            Intent intent = getIntent();
+            intent.getIntExtra("stname", currentStage);
+        }catch (Exception e){}
         gameLayout = findViewById(R.id.gameLayout);
         gameTime = findViewById(R.id.time);
         jumpBtn = findViewById(R.id.jump);

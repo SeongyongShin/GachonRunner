@@ -3,7 +3,6 @@ package com.example.shin.final_project;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -20,6 +19,7 @@ import static com.example.shin.final_project.cvs.*;
 public  class GameView extends SurfaceView implements Runnable, View.OnClickListener{
     Button jumpBtn , atkBtn;
     TextView gameTime;
+    private boolean asdfg = true;
     private Thread gameThread;
     private volatile boolean playing;
     private long thisTimeFrame;
@@ -29,7 +29,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     private boolean timeFirst = true;
     private int timecount = 0;
     private int currentStage = 1;
-    Handler handler;
+
     CharacterObject mainCharacter;
     Background background;
     Background background2;
@@ -59,7 +59,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         ground = new Ground(c,R.drawable.goundtest);
         ground1 = new Ground(c,R.drawable.goundtest);
         enemy1 = new EnemyObject(c,R.drawable.enemy1);
-        mainCharacter = new CharacterObject(c,R.drawable.test);
+        mainCharacter = new CharacterObject(c,R.drawable.shin);
         this.currentStage = GameLayout.currentStage;
         for(int i=0;i<5;i++) {
             grounds.add(i, ground1);
@@ -121,17 +121,38 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         if(mainCharacter.isMoving()){
             if(time > mainCharacter.getLastFrameChangeTime() + mainCharacter.getFrameLengthInMillisecond()){
 
-                mainCharacter.setLastFrameChangeTime(time);
+                Log.d("asd"," : "+mainCharacter.getCurrentFrame() + " : " + mainCharacter.getFramecount());
 
+                mainCharacter.setLastFrameChangeTime(time);
+                if(mainCharacter.isJumpcheck()){
+                    mainCharacter.setCurrentHFrame(1);
+                }else if(!mainCharacter.isJumpcheck() && mainCharacter.getCurrentHFrame() == 1){
+                    mainCharacter.setCurrentHFrame(0);
+                }
+                if(mainCharacter.getCurrentHFrame() == 3){
+                    if(mainCharacter.getCurrentFrame() == 19){
+                        Intent intent = new Intent(activity,GameOverActivity.class);
+                        activity.startActivity(intent);
+                    }
+                }
                 mainCharacter.setCurrentFrame(mainCharacter.getCurrentFrame() + 1);
 
-                if(mainCharacter.getCurrentFrame() >= mainCharacter.getFramecount()){
+                if(mainCharacter.getCurrentFrame() >= mainCharacter.getFramecount()){//mainCharacter.getFramecount()){
                     mainCharacter.setCurrentFrame(0);
-                    if(mainCharacter.getCurrentHFrame() == 1){
-                        mainCharacter.setCurrentHFrame(0);
-                    }else{
-                        mainCharacter.setCurrentHFrame(1);
-                    }
+                    /*switch (mainCharacter.getCurrentHFrame()){
+                        case 1 :
+                            mainCharacter.setCurrentHFrame(2);
+                            break;
+                        case 2 :
+                            mainCharacter.setCurrentHFrame(3);
+                            break;
+                        case 3 :
+                            mainCharacter.setCurrentHFrame(4);
+                            break;
+                        default:
+                            mainCharacter.setCurrentHFrame(1);
+                            break;
+                    }*/
                 }
             }
         }
@@ -185,6 +206,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             switch (v.getId()) {
                 case R.id.jump:
                     mainCharacter.setJumpcheck(true);
+                    mainCharacter.setCurrentFrame(13);
                     break;
                 case R.id.attack:
                     if (!isAtck && !isBulletMoving) isAtck = true;
@@ -259,6 +281,9 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         try{
             if(enemy1 != null &&(enemy1.getXpos()<mainCharacter.getXRight())){
                 enemy1.setXpos(cvsWidth - enemy1.getFrameWidth());
+                mainCharacter.setCurrentHFrame(3);
+                mainCharacter.setCurrentFrame(0);
+                if(asdfg){mainCharacter.setCurrentHFrame(0);asdfg = false;}
             }
             if(bullet.getXpos()>enemy1.getXpos()){
                 if(bullet.getYBottom()<enemy1.getYpos()
@@ -276,5 +301,4 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         }
 
     }
-
 }

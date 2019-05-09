@@ -40,11 +40,11 @@ public class GameEndActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.goToMenu : intent = new Intent(GameEndActivity.this,MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            GameLayout gameLayout = (GameLayout)GameLayout.activity;
-            gameLayout.finish();
-            finish();
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                GameLayout gameLayout = (GameLayout)GameLayout.activity;
+                gameLayout.finish();
+                finish();
             break;
             case R.id.nextStage :
                 Toast.makeText(getApplicationContext(),"현재 미구현입니다.",Toast.LENGTH_SHORT).show();

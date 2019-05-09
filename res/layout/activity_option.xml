@@ -32,7 +32,7 @@
     <!-- 닫기 버튼 -->
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="172dp"
+        android:layout_height="119dp"
         android:background="#63daff">
 
         <CheckBox
