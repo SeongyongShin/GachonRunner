@@ -18,7 +18,7 @@ public class cvs {
     public static float deadLine;
     public static int cvsWidth;
     public static int cvsHeight;
-    public static int percent = 10;
+    public static int percent = 8;
     public static int stage = 1;
 
 }

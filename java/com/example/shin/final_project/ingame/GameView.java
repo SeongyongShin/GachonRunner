@@ -31,6 +31,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     Ground ground1[] = new Ground[10];
     Ground ground2[] = new Ground[10];
     Ground ground3[];
+    Ground ground4;
     Context c;
     Bullet bullet = null;
     Intent intent;
@@ -49,7 +50,6 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     private boolean isCharacterset = true;
     public boolean forSecondGround = true;
 
-
     private long thisTimeFrame;
     private long startFrameTime, oldTime, recentTime;
     private float fps;
@@ -64,6 +64,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         this.who = who;
         c = context;
         ourHolder = getHolder();
+        isCheck = true;
         gameLayout = (GameLayout)GameLayout.activity;
         jumpBtn = GameLayout.jumpBtn;
         atkBtn = GameLayout.atkBtn;
@@ -74,6 +75,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         background2.setXpos(background.getObj().getWidth());
         background2.setFirstcheck(false);
         ground = new Ground(c, R.drawable.goundtest);
+        ground4 = ground;
         //------------------------------------------------------------------------
         for(int i=0;i<10;i++){ground1[i] = new Ground(c,R.drawable.goundtest);}
         for(int i=0;i<10;i++){ground2[i] = new Ground(c,R.drawable.goundtest);}
@@ -113,7 +115,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                     public void run() {
                         while(true){
                             try {
-                                Thread.sleep(1000);
+                                Thread.sleep(2000);
 
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -167,8 +169,21 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
 
         if(isBulletMoving){ makeBullet(); }
         if(startGround1){ if(ground.getXRight() < 0){startGround1 = false; }}
-        if(!isCharacterOnGround()){ die(); }
-
+        if(mainCharacter.getYpos() > deadLine){
+            mainCharacter.setCurrentHFrame(3);
+            mainCharacter.setCurrentFrame(0);
+            if (asdfg) {
+                mainCharacter.setCurrentHFrame(0);
+                asdfg = false;
+            }
+            if(mainCharacter.getCurrentHFrame() == 3){
+                if(mainCharacter.getCurrentFrame() == 18){
+                    Intent intent = new Intent(activity,GameOverActivity.class);
+                    activity.startActivity(intent);
+                    playing = false;
+                }
+            }}
+            mainCharacter.setCurrentHFrame(0);
     }
 
     public void manageCurrentFrame(){
@@ -176,22 +191,13 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
 
         if(mainCharacter.isMoving()){
             if(time > mainCharacter.getLastFrameChangeTime() + mainCharacter.getFrameLengthInMillisecond()){
-
-                Log.d("asd"," : "+mainCharacter.getCurrentFrame() + " : " + mainCharacter.getFramecount());
-
                 mainCharacter.setLastFrameChangeTime(time);
                 if(mainCharacter.isJumpcheck() && mainCharacter.getCurrentHFrame() != 3){
                     mainCharacter.setCurrentHFrame(1);
                 }else if(!mainCharacter.isJumpcheck() && mainCharacter.getCurrentHFrame() == 1){
                     mainCharacter.setCurrentHFrame(0);
                 }
-                if(mainCharacter.getCurrentHFrame() == 3){
-                    if(mainCharacter.getCurrentFrame() == 18){
-                        Intent intent = new Intent(activity,GameOverActivity.class);
-                        activity.startActivity(intent);
-                        playing = false;
-                    }
-                }
+
                 mainCharacter.setCurrentFrame(mainCharacter.getCurrentFrame() + 1);
 
                 if(mainCharacter.getCurrentFrame() >= mainCharacter.getFramecount()){//mainCharacter.getFramecount()){
@@ -220,7 +226,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             if(bullet != null ){bullet.drawObj();}
             //if(enemy1.isMoving()){enemy1.drawObj();}
             enemy1.drawObj();
-
+            //Log.d("asg","캐릭 YBottom : " + mainCharacter.getYBottom() + " 땅 Y : " + ground4.getYpos());
             //for(int i=0;i<5;i++){grounds.get(i).drawObj();}
             ourHolder.unlockCanvasAndPost(canvas); // 잠금을 풀면 캔버스가 그려진다.
         }
@@ -298,24 +304,56 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         }
     }
     public void makeCharacter(){
-        //캐릭터
+        //캐릭터 밑에 있는지 체크
+        //Log.d("truth","" + isCharacterOnGround());
+        if(!isCharacterOnGround()){
+            if(!mainCharacter.isJumpcheck()){
+                mainCharacter.setYpos(mainCharacter.getYpos() + mainCharacter.getJumpSpeed()/fps);
+            }
+            if(characterY - mainCharacter.getFrameHeight()> deadLine) {
+                Intent intent = new Intent(activity, GameOverActivity.class);
+                activity.startActivity(intent);
+                playing = false;
+            }
+        }
+        //캐릭터 점프체크
         if(mainCharacter.isJumpcheck()){
             if(isCheck) {
                 if(mainCharacter.isJumping()) {
-                    mainCharacter.setCurrentHeight(mainCharacter.getYpos());
+                    mainCharacter.setCurrentHeight(mainCharacter.getYpos()+60);
                     mainCharacter.setJumping(false);
                 }
-                mainCharacter.setYpos(mainCharacter.getYpos() - mainCharacter.getRunSpeed() / fps);
+                mainCharacter.setYpos(mainCharacter.getYpos() - mainCharacter.getJumpSpeed() / fps);
                 if(mainCharacter.getYBottom()< mainCharacter.getCurrentHeight()){
                     isCheck = false;
                 }
             }else{
-                mainCharacter.setYpos(mainCharacter.getYpos() + mainCharacter.getRunSpeed()/fps);
-                if(mainCharacter.getYpos() > mainCharacter.getCurrentHeight()){
+                mainCharacter.setYpos(mainCharacter.getYpos() + mainCharacter.getJumpSpeed()/fps);
+                if(ground4.getYpos() - mainCharacter.getYBottom() < 27 &&  ground4.getYpos() - mainCharacter.getYBottom() > -27){
+
                     isCheck = true;
                     mainCharacter.setJumpcheck(false);
-                    mainCharacter.setFirstcheck(true);
+                    mainCharacter.setYBottom(ground4.getYpos());
+                    mainCharacter.setYpos(ground4.getYpos()-mainCharacter.getFrameHeight());
                     mainCharacter.setJumping(true);
+                }else if(mainCharacter.getYBottom() > ground4.getYpos()){
+
+
+                    mainCharacter.setJumpcheck(false);
+
+                    mainCharacter.setCurrentHFrame(3);
+                    mainCharacter.setCurrentFrame(0);
+                    if (asdfg) {
+                        mainCharacter.setCurrentHFrame(0);
+                        asdfg = false;
+                    }
+                    if(mainCharacter.getCurrentHFrame() == 3){
+                        if(mainCharacter.getCurrentFrame() == 18){
+                            Intent intent = new Intent(activity,GameOverActivity.class);
+                            activity.startActivity(intent);
+                            playing = false;
+                        }
+                    }
                 }
             }
         }
@@ -428,7 +466,20 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         try{
             if(enemy1 != null &&(enemy1.getXpos()<mainCharacter.getXRight())){
                 enemy1.setXpos(cvsWidth - enemy1.getFrameWidth());
-                die();
+
+                mainCharacter.setCurrentHFrame(3);
+                mainCharacter.setCurrentFrame(0);
+                if (asdfg) {
+                    mainCharacter.setCurrentHFrame(0);
+                    asdfg = false;
+                }
+                if(mainCharacter.getCurrentHFrame() == 3){
+                    if(mainCharacter.getCurrentFrame() == 18){
+                        Intent intent = new Intent(activity,GameOverActivity.class);
+                        activity.startActivity(intent);
+                        playing = false;
+                    }
+                }
 
             }
             if(bullet.getXpos()>enemy1.getXpos()){
@@ -453,11 +504,22 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             progress.setCurrentHFrame(progress.getCurrentHFrame()+1);
         }
     }
-    public void die(){
-        mainCharacter.setCurrentHFrame(3);
-        mainCharacter.setCurrentFrame(0);
-        if(asdfg){mainCharacter.setCurrentHFrame(0);asdfg = false;}
-    }
+    /*public void die(){
+
+            mainCharacter.setCurrentHFrame(3);
+            mainCharacter.setCurrentFrame(0);
+            if (asdfg) {
+                mainCharacter.setCurrentHFrame(0);
+                asdfg = false;
+            }
+            if(mainCharacter.getCurrentHFrame() == 3){
+                if(mainCharacter.getCurrentFrame() == 18){
+                    Intent intent = new Intent(activity,GameOverActivity.class);
+                    activity.startActivity(intent);
+                    playing = false;
+                }
+            }
+    }*/
     public void drawGround(){
 
         if(forSecondGround){ // 초기 설정.
@@ -544,14 +606,32 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         }
             for(int i=0;i<10;i++){
 
-                if(ground1[i].getXpos()<characterX && ground1[i].getXRight()>characterX) {
-                    if (ground1[i].getYpos() < characterY || ground1[i].getYBottom() < characterY) return false;
-                    else return true;
+                if(ground1[i].getXpos()<characterX && ground1[i].getXRight()>characterX) { // 머리박았을때.
+                    if (ground1[i].getYpos() < characterY || ground1[i].getYBottom() < characterY){
+                        ground4 = ground1[i];
+                        return false;
+                    }else if(ground1[i].getYpos() > characterY && ground1[i].getYpos() - 27 > characterY){ // 낭떠러지
+                        ground4 = ground1[i];
+                        return false;
+                    }
+                    else{
+                        ground4 = ground1[i];
+                        return true;
+                    }
                 }
 
-                if(ground2[i].getXpos()<characterX && ground2[i].getXRight()>characterX) {
-                    if (ground2[i].getYpos() < characterY || ground2[i].getYBottom() < characterY) return false;
-                    else return true;
+                else if(ground2[i].getXpos()<characterX && ground2[i].getXRight()>characterX) {
+                    if (ground2[i].getYpos() < characterY || ground2[i].getYBottom() < characterY){
+                        ground4 = ground2[i];
+                        return false;
+                    }else if(ground2[i].getYpos() > characterY && ground2[i].getYpos()+10 > characterY){
+                        ground4 = ground2[i];
+                        return false;
+                    }
+                    else{
+                        ground4 = ground2[i];
+                        return true;
+                    }
                 }
 
             }
