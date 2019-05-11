@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".outgame.MainActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,20 +20,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GameLayout"
+            android:name=".outgame.GameLayout"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".OptionActivity"
+            android:name=".outgame.OptionActivity"
             android:screenOrientation="landscape"
             android:theme="@style/mystlye" />
         <activity
-            android:name=".StageActivity"
+            android:name=".outgame.StageActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".GameEndActivity"
+            android:name=".outgame.GameEndActivity"
             android:theme="@style/mystlye" />
-        <activity android:name=".GameOverActivity"
+        <activity
+            android:name=".outgame.GameOverActivity"
             android:theme="@style/mystlye" />
+        <activity
+            android:name=".outgame.LoadingActivity"
+            android:theme="@style/mystlye" />
+        <activity android:name=".selectCharacter.SelectActivity"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>
