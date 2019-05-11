@@ -16,53 +16,49 @@ import com.example.shin.final_project.outgame.GameLayout;
 import com.example.shin.final_project.outgame.GameOverActivity;
 import com.example.shin.final_project.outgame.Progress;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import static com.example.shin.final_project.outgame.GameLayout.activity;
-import static com.example.shin.final_project.staticItem.cvs.canvas;
-import static com.example.shin.final_project.staticItem.cvs.cvsHeight;
-import static com.example.shin.final_project.staticItem.cvs.cvsWidth;
-import static com.example.shin.final_project.staticItem.cvs.firstSet;
-import static com.example.shin.final_project.staticItem.cvs.isAtck;
-import static com.example.shin.final_project.staticItem.cvs.isBulletMoving;
-import static com.example.shin.final_project.staticItem.cvs.isCheck;
-import static com.example.shin.final_project.staticItem.cvs.isEnemyMoving;
-import static com.example.shin.final_project.staticItem.cvs.ourHolder;
-import static com.example.shin.final_project.staticItem.cvs.stage;
-import static com.example.shin.final_project.staticItem.cvs.startGround1;
-
+import static com.example.shin.final_project.staticItem.cvs.*;
 public  class GameView extends SurfaceView implements Runnable, View.OnClickListener{
     Button jumpBtn , atkBtn;
     TextView gameTime, t1,t2;
-    private boolean asdfg = true;
-    public Thread gameThread;
-    private volatile boolean playing;
-    private boolean enemyMoving = true, threadSleep = false;
-    private long thisTimeFrame;
-    private float fps;
-    private boolean startGame = true;
-    private boolean startCount = true;
-    long startFrameTime, recentTime, oldTime;
-    private boolean timeFirst = true;
-    private int timecount = 0;
-    private int currentStage = 1;
     Progress progress;
     CharacterObject mainCharacter;
     Background background;
     Background background2;
     Ground ground;
-    Ground ground1;
+    Ground ground1[] = new Ground[10];
+    Ground ground2[] = new Ground[10];
+    Ground ground3[];
     Context c;
-    public static EnemyObject enemy1;
     Bullet bullet = null;
-    ArrayList<Ground> grounds = new ArrayList<Ground>();
     Intent intent;
     GameLayout gameLayout;
-
     Random random = new Random();
+    public Thread gameThread;
+    public static EnemyObject enemy1;
 
+    private volatile boolean playing;
+    private boolean asdfg = true;
+    private boolean startGame = true;
+    private boolean startCount = true;
+    private boolean timeFirst = true;
+    private boolean groundMoving = true;
+    private boolean firstGroundSet = true;
+    private boolean isCharacterset = true;
+    public boolean forSecondGround = true;
+
+
+    private long thisTimeFrame;
+    private long startFrameTime, oldTime, recentTime;
+    private float fps;
+    private float characterX, characterY;
+
+    private int timecount = 0;
+    private int currentStage = 1;
     private int who;
+
     public GameView(Context context, int stage, int who){
         super(context);
         this.who = who;
@@ -78,15 +74,18 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         background2.setXpos(background.getObj().getWidth());
         background2.setFirstcheck(false);
         ground = new Ground(c, R.drawable.goundtest);
-        ground1 = new Ground(c,R.drawable.goundtest);
+        //------------------------------------------------------------------------
+        for(int i=0;i<10;i++){ground1[i] = new Ground(c,R.drawable.goundtest);}
+        for(int i=0;i<10;i++){ground2[i] = new Ground(c,R.drawable.goundtest);}
+        //------------------------------------------------------------------------
         enemy1 = new EnemyObject(c,R.drawable.enemy1);
         progress = new Progress(c,R.drawable.progress);
         this.currentStage = GameLayout.currentStage;
-        for(int i=0;i<5;i++) {
+        /*for(int i=0;i<5;i++) {
             grounds.add(i, ground1);
-            grounds.get(i).num = random.nextInt()%5;
-        }
-
+            //grounds.get(i).num = random.nextInt()%5;
+        }*/
+        startGround1 = true;
         gameLayout.Dialog();
     }
 
@@ -94,11 +93,13 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     public void run() {
         while(playing){
             startFrameTime= System.currentTimeMillis();
+
             oldTime = (startFrameTime/1000)%10000;
             if(timeFirst){
                 recentTime = oldTime;
                 timeFirst = false;
             }
+
             update();
             draw();
             thisTimeFrame = System.currentTimeMillis() - startFrameTime;
@@ -153,9 +154,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         }
     }
     public void update(){
-        if(firstSet) {
-            cvsWidth = getWidth(); cvsHeight = getHeight(); firstSet = false;
-        }
+        if(firstSet) {cvsWidth = getWidth(); cvsHeight = getHeight(); firstSet = false;}
         makeBackGround();
         makeCharacter();
         makeGround();
@@ -167,6 +166,8 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             isBulletMoving = true;}
 
         if(isBulletMoving){ makeBullet(); }
+        if(startGround1){ if(ground.getXRight() < 0){startGround1 = false; }}
+        if(!isCharacterOnGround()){ die(); }
 
     }
 
@@ -198,6 +199,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                 }
             }
         }
+
     }
 
     public void draw(){
@@ -213,7 +215,8 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                 background2.setSecondcheck(false);
             }
             mainCharacter.drawObj();
-            if(startGround1){ground.drawObj();}
+            if(startGround1){ground.drawObj();drawGround();}
+            else{drawGround();}
             if(bullet != null ){bullet.drawObj();}
             //if(enemy1.isMoving()){enemy1.drawObj();}
             enemy1.drawObj();
@@ -323,7 +326,93 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             ground.setXpos(ground.getXpos() - (float)ground.getRunSpeed());
            // if((ground.getXpos() + ground.getWidth())<=0) startGround1 = false;
         }
+
+        // 이후 땅.
+        if (ground1[0].isMoving()) {
+            //------------------------------------------------------------------------
+            ground1[0].setXpos(ground1[0].getXpos() - (float)ground1[0].getRunSpeed());
+            ground1[0].setXRight(ground1[0].getXpos()+ground1[0].frameWidth);
+            for(int i=1;i<10;i++){
+                ground1[i].setXpos(ground1[i-1].getXRight());
+                ground1[i].setXRight(ground1[i].getXpos()+ground1[i].frameWidth);
+            }
+            //------------------------------------------------------------------------
+            ground2[0].setXpos(ground2[0].getXpos() - (float)ground1[0].getRunSpeed());
+            ground2[0].setXRight(ground2[0].getXpos()+ground2[0].frameWidth);
+            for(int i=1;i<10;i++){
+                ground2[i].setXpos(ground2[i-1].getXRight());
+                ground2[i].setXRight(ground2[i].getXpos()+ground2[i].frameWidth);
+            }
+            //------------------------------------------------------------------------
+        }
+        if(startGround1 == false) {
+            if (ground1[9].getXRight() < 0) {
+                ground1[0].setXpos(ground2[9].getXRight());
+                groundMoving = true;
+                createGroundPattern();
+            }
+            if (ground2[9].getXRight() < 0) {
+                ground2[0].setXpos(ground1[9].getXRight());
+                groundMoving = false;
+                createGroundPattern();
+            }
+        }
     }
+    public void createGroundPattern(){
+
+        if(groundMoving){ ground3 = ground1;}
+        else{ ground3 = ground2;}
+        for(int i=0;i<10;i++){
+            ground3[i].setYpos(ground.getYpos());
+        }
+        switch (random.nextInt(5)){
+            case 0:
+                for(int i = 1;i<9;i+=2) {
+                    ground3[i].setYpos(cvsHeight);
+                }
+                break;
+
+            case 1:
+                ground3[2].setYpos(ground.getYpos()-ground.getFrameHeight());
+                ground3[6].setYpos(ground3[2].getYpos());
+                break;
+
+            case 2:
+                ground3[1].setYpos(ground.getYpos()-ground.getFrameHeight());
+                ground3[2].setYpos(ground3[1].getYpos()-ground.getFrameHeight());
+                ground3[3].setYpos(ground3[2].getYpos());
+                ground3[4].setYpos(cvsHeight);
+                ground3[5].setYpos(ground3[2].getYpos());
+                ground3[6].setYpos(cvsHeight);
+            break;
+
+            case 3:
+                for(int i=1;i<10;i+=2){
+                    ground3[i].setYpos(ground.getYpos()-ground.getFrameHeight());
+                }
+                for(int i=3;i<10;i+=3){
+                    ground3[i].setYpos(cvsHeight);
+                }
+
+                break;
+
+            case 4:
+                for(int i=3;i<10;i+=3){
+                    ground3[i].setYpos(cvsHeight);
+                }
+                break;
+
+            default:
+                break;
+
+        }
+
+        if(groundMoving){ ground1 = ground3;}
+        else{ ground2 = ground3;}
+        groundMoving = !groundMoving;
+
+    }
+
     public void createBullet(Context c, int resource, int x, int x1, int y, int y1, int w){
         bullet = new Bullet(c,resource,x,x1,y,y1,w,ground.frameHeight);
         isAtck = false;
@@ -369,17 +458,37 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         mainCharacter.setCurrentFrame(0);
         if(asdfg){mainCharacter.setCurrentHFrame(0);asdfg = false;}
     }
-    public void setGroundPatterns(){
-        switch (random.nextInt(3)){
-            case 0:
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            default:
-                break;
+    public void drawGround(){
 
+        if(forSecondGround){ // 초기 설정.
+            //------------------------------------------------------------------------
+            ground1[0].setXpos(cvsWidth-10);
+            ground1[0].setXRight(ground1[0].getXpos()+ground1[0].getFrameWidth());
+            for(int i=1;i<10;i++){
+                ground1[i].setXpos(ground1[i-1].getXRight());
+                ground1[i].drawObj();
+            }
+            //------------------------------------------------------------------------
+
+            ground2[0].setXpos(ground1[9].getXRight());
+            ground2[0].setXRight(ground2[0].getXpos()+ground2[0].getFrameWidth());
+            for(int i=1;i<10;i++){
+                ground2[i].setXpos(ground2[i-1].getXRight());
+                ground2[i].drawObj();
+            }
+            //------------------------------------------------------------------------
+
+            forSecondGround = false;
+        }
+
+        for(int i=0;i<10;i++){
+
+            ground1[i].drawObj();
+            ground2[i].drawObj();
+            if(firstGroundSet) {
+                firstGroundSetting();
+                firstGroundSet = false;
+            }
         }
 
     }
@@ -416,5 +525,36 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         }else{
             mainCharacter = new CharacterObject(c,R.drawable.kim1);
         }
+    }
+    private void firstGroundSetting(){
+        for(int i=0;i<10;i++) {
+            if (i % 2 == 0) {
+                ground1[i].setYpos(cvsWidth-300);
+                ground1[i].setXY();
+            }
+        }
+        ground1[2].setYpos(ground.getYpos()-ground.getFrameHeight());
+        ground1[6].setYpos(ground.getYpos());
+
+    }
+    private boolean isCharacterOnGround(){
+        if(isCharacterset) {
+            characterX = mainCharacter.getXpos() + mainCharacter.getFrameWidth() / 2;
+            characterY = mainCharacter.getYBottom();
+        }
+            for(int i=0;i<10;i++){
+
+                if(ground1[i].getXpos()<characterX && ground1[i].getXRight()>characterX) {
+                    if (ground1[i].getYpos() < characterY || ground1[i].getYBottom() < characterY) return false;
+                    else return true;
+                }
+
+                if(ground2[i].getXpos()<characterX && ground2[i].getXRight()>characterX) {
+                    if (ground2[i].getYpos() < characterY || ground2[i].getYBottom() < characterY) return false;
+                    else return true;
+                }
+
+            }
+        return true;
     }
 }

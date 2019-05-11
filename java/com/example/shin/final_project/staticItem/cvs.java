@@ -14,10 +14,11 @@ public class cvs {
     public static boolean isAtck = false;
     public static boolean isBulletMoving = false;
     public static boolean isEnemyMoving = true;
+
+    public static float deadLine;
     public static int cvsWidth;
     public static int cvsHeight;
     public static int percent = 10;
     public static int stage = 1;
-    public static int gametimer = 60;
 
 }
