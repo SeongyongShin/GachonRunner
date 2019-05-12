@@ -1,12 +1,16 @@
 package com.example.shin.final_project.DB;
 
+import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,20 +23,26 @@ public class MySQL extends AppCompatActivity implements View.OnClickListener{
     SQLiteDatabase database;
     TextView myscore;
     EditText name;
+    ImageView img;
     Button save,main;
     int version = 1;
     String str = "";
     SendResult sendResult;
+    public static Activity Mactivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         deleteStatusBar();
         setContentView(R.layout.activity_mysql);
+        Mactivity = MySQL.this;
         myscore = findViewById(R.id.myscore);
         save = findViewById(R.id.saveButton);save.setOnClickListener(this);
         main = findViewById(R.id.m2);main.setOnClickListener(this);
         name = findViewById(R.id.myName);
+        img = findViewById(R.id.img);
+        Drawable alpha = img.getDrawable();
+        alpha.setAlpha(100);
 
         Toast.makeText(getApplicationContext(),"이름을 입력하세요",Toast.LENGTH_SHORT).show();
         myscore.setText("Stage : "+ (cvs.currentStage));
@@ -54,7 +64,8 @@ public class MySQL extends AppCompatActivity implements View.OnClickListener{
                 //Log.d("ass","Record.score : " + dbHelper.open(str).score);
             dbHelper.getResult();
             try {
-                sendResult = new SendResult(MyRecord.name,Integer.valueOf(MyRecord.score));
+                Log.d("getparam",str);
+                sendResult = new SendResult(str,Integer.valueOf(cvs.currentStage));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -64,6 +75,7 @@ public class MySQL extends AppCompatActivity implements View.OnClickListener{
             finish();
         }
     }
+
     private void deleteStatusBar(){
         View decorView = getWindow().getDecorView();
         int uiOption = decorView.getSystemUiVisibility();
@@ -74,5 +86,17 @@ public class MySQL extends AppCompatActivity implements View.OnClickListener{
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT )
             uiOption |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility( uiOption );
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        deleteStatusBar();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        deleteStatusBar();
     }
 }

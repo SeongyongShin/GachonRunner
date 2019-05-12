@@ -2,14 +2,18 @@ package com.example.shin.final_project.outgame;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.example.shin.final_project.DB.DatabaseHelper;
 import com.example.shin.final_project.DB.MyRecord;
 import com.example.shin.final_project.DB.MySQL;
+import com.example.shin.final_project.DB.RankActivity;
 import com.example.shin.final_project.R;
 import com.example.shin.final_project.ingame.GameView;
 import com.example.shin.final_project.selectCharacter.SelectActivity;
@@ -21,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHelper dbHelper;
     SQLiteDatabase database;
     MyRecord record;
+    LinearLayout img;
 
     //private GameView1 gameView1;
     public com.example.shin.final_project.staticItem.cvs cvs = new cvs();
@@ -28,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        img = findViewById(R.id.ml);
+        Drawable alpha = img.getBackground();
+        alpha.setAlpha(200);
 
 
         if(cvs.mainAcSet) {
@@ -37,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
             dbHelper = new DatabaseHelper(MainActivity.this, "MyRecord.db", null, 1);
             database = dbHelper.getWritableDatabase();
             cvs.stage = Integer.valueOf(dbHelper.openMax().score);
+            Log.d("fid",""+cvs.currentStage);
             cvs.mainAcSet = false;
         }
        // gameView = new GameView(this);
@@ -90,6 +99,11 @@ public class MainActivity extends AppCompatActivity {
     }
     public void goToDB(View view) {
         intent = new Intent(this, MySQL.class);
+        startActivity(intent);
+    }
+
+    public void watchRank(View view) {
+        intent = new Intent(this, RankActivity.class);
         startActivity(intent);
     }
 }

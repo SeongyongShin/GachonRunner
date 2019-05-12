@@ -1,5 +1,6 @@
 package com.example.shin.final_project.outgame;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
 
+import com.example.shin.final_project.DB.DatabaseHelper;
 import com.example.shin.final_project.R;
 import com.example.shin.final_project.staticItem.cvs;
 
@@ -25,7 +27,9 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
         deleteStatusBar();
 
         c1 = findViewById(R.id.c1);c1.setOnClickListener(this);
+        c2 = findViewById(R.id.c2);c2.setOnClickListener(this);
         c1.setChecked(c_1);
+        c2.setChecked(true);
 
     }
 
@@ -68,6 +72,13 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
                 cvs.optionJump = !cvs.optionJump;
                 c_1 = !c_1;
                 break;
+            case R.id.c2:
+                DatabaseHelper dbHelper;
+                SQLiteDatabase database;
+                dbHelper = new DatabaseHelper(this, "MyRecord.db", null, 1);
+                database = dbHelper.getWritableDatabase();
+                dbHelper.delete_Table();
+                dbHelper.close();
             default: break;
         }
     }
