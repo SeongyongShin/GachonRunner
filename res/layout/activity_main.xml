@@ -2,8 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ml"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/mainimage"
     android:orientation="vertical"
     tools:context=".outgame.MainActivity">
 
@@ -11,8 +13,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/mainlayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gachon">
+        android:layout_height="match_parent">
 
         <Button
             android:id="@+id/button"
@@ -105,6 +106,7 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/btn_ranking"
             android:clickable="true"
+            android:onClick="watchRank"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.316"
@@ -133,7 +135,7 @@
 
         <TextView
             android:id="@+id/textView3"
-            android:layout_width="397dp"
+            android:layout_width="0dp"
             android:layout_height="76dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
@@ -144,7 +146,9 @@
             android:gravity="center"
             android:text="Gachon Runner"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textSize="36sp"
+            android:textColor="#8c0202"
+            android:textSize="60sp"
+            android:textStyle="bold|italic"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

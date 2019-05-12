@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.shin.final_project">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:configChanges="orientation"
@@ -39,10 +40,14 @@
         <activity
             android:name=".outgame.LoadingActivity"
             android:theme="@style/mystlye" />
-        <activity android:name=".selectCharacter.SelectActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".DB.MySQL"
-            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".selectCharacter.SelectActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".DB.MySQL"
+            android:screenOrientation="landscape" />
+        <activity android:name=".DB.RankActivity"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>
