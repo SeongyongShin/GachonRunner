@@ -48,7 +48,10 @@ public class GameOverActivity extends AppCompatActivity implements View.OnClickL
             case R.id.retry :
                 gameLayout = (GameLayout) GameLayout.activity;
                 gameLayout.finish();
-                Intent intent = new Intent(GameOverActivity.this,GameLayout.class);
+                Intent intent1 = getIntent();
+                intent = new Intent(GameOverActivity.this,GameLayout.class);
+                intent.putExtra("who",intent1.getIntExtra("who",1));
+                intent.putExtra("stage",intent1.getIntExtra("stage",1));
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();

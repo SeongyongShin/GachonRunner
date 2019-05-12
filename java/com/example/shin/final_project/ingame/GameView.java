@@ -3,6 +3,9 @@ package com.example.shin.final_project.ingame;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -15,6 +18,7 @@ import com.example.shin.final_project.outgame.GameEndActivity;
 import com.example.shin.final_project.outgame.GameLayout;
 import com.example.shin.final_project.outgame.GameOverActivity;
 import com.example.shin.final_project.outgame.Progress;
+import com.example.shin.final_project.staticItem.cvs;
 
 import java.util.Random;
 
@@ -37,6 +41,11 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     Intent intent;
     GameLayout gameLayout;
     Random random = new Random();
+
+    SoundPool sp;
+    int intSoundCorrect;
+    int intdead;
+
     public Thread gameThread;
     public static EnemyObject enemy1;
 
@@ -48,7 +57,10 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     private boolean groundMoving = true;
     private boolean firstGroundSet = true;
     private boolean isCharacterset = true;
+    private boolean sound = true;
     public boolean forSecondGround = true;
+    public boolean sibal = true;
+
 
     private long thisTimeFrame;
     private long startFrameTime, oldTime, recentTime;
@@ -56,8 +68,8 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     private float characterX, characterY;
 
     private int timecount = 0;
-    private int currentStage = 1;
-    private int who;
+    private int currentStage1 = 1;
+    private int who, stage;
 
     public GameView(Context context, int stage, int who){
         super(context);
@@ -65,6 +77,18 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         c = context;
         ourHolder = getHolder();
         isCheck = true;
+        backG = true;
+        startGround1 = true;
+        startGround = true;
+        firstSet = true;
+        isAtck = false;
+        isBulletMoving = false;
+        isEnemyMoving = true;
+
+        sp = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        intSoundCorrect = sp.load(c,R.raw.jump,1);
+        intdead = sp.load(c,R.raw.dead,1);
+
         gameLayout = (GameLayout)GameLayout.activity;
         jumpBtn = GameLayout.jumpBtn;
         atkBtn = GameLayout.atkBtn;
@@ -82,7 +106,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         //------------------------------------------------------------------------
         enemy1 = new EnemyObject(c,R.drawable.enemy1);
         progress = new Progress(c,R.drawable.progress);
-        this.currentStage = GameLayout.currentStage;
+        this.currentStage1 = GameLayout.currentStage;
         /*for(int i=0;i<5;i++) {
             grounds.add(i, ground1);
             //grounds.get(i).num = random.nextInt()%5;
@@ -115,7 +139,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                     public void run() {
                         while(true){
                             try {
-                                Thread.sleep(2000);
+                                Thread.sleep(500);
 
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -123,8 +147,12 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                             timecount++;
                                 if(progress.getCurrentHFrame() >= progress.getFrameHcount()-1 ) {
                                     playing=false;
-                                    if(currentStage >= stage)stage++;
+
+                                    if(currentStage >= cvs.stage)cvs.stage++;
                                     intent = new Intent(activity, GameEndActivity.class);
+                                    intent.putExtra("who",who);
+                                    intent.putExtra("stage",stage);
+                                    Log.d("asdfg",""+stage);
                                     activity.startActivity(intent);
                                     break;
                                 }
@@ -179,11 +207,16 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             if(mainCharacter.getCurrentHFrame() == 3){
                 if(mainCharacter.getCurrentFrame() == 18){
                     Intent intent = new Intent(activity,GameOverActivity.class);
+                    makeSound(1);
+                    intent.putExtra("who",who);
+                    intent.putExtra("stage",stage);
                     activity.startActivity(intent);
                     playing = false;
                 }
-            }}
+            }}if(sibal) {
             mainCharacter.setCurrentHFrame(0);
+            sibal = !sibal;
+        }
     }
 
     public void manageCurrentFrame(){
@@ -309,15 +342,24 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         if(!isCharacterOnGround()){
             if(!mainCharacter.isJumpcheck()){
                 mainCharacter.setYpos(mainCharacter.getYpos() + mainCharacter.getJumpSpeed()/fps);
+                if(ground4.getYpos() == ground.getYpos()){
+                   if(mainCharacter.getYBottom() - ground4.getYpos() > 27 && ground4.getYpos() - mainCharacter.getYBottom() > 27){
+                       mainCharacter.setYpos(ground4.getYpos());
+                   }
+                }
             }
             if(characterY - mainCharacter.getFrameHeight()> deadLine) {
                 Intent intent = new Intent(activity, GameOverActivity.class);
+                makeSound(1);
+                intent.putExtra("who",who);
+                intent.putExtra("stage",stage);
                 activity.startActivity(intent);
                 playing = false;
             }
         }
         //캐릭터 점프체크
         if(mainCharacter.isJumpcheck()){
+            if(optionJump) {makeSound(0); sound = false;}
             if(isCheck) {
                 if(mainCharacter.isJumping()) {
                     mainCharacter.setCurrentHeight(mainCharacter.getYpos()+60);
@@ -336,6 +378,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                     mainCharacter.setYBottom(ground4.getYpos());
                     mainCharacter.setYpos(ground4.getYpos()-mainCharacter.getFrameHeight());
                     mainCharacter.setJumping(true);
+                    sound = true;
                 }else if(mainCharacter.getYBottom() > ground4.getYpos()){
 
 
@@ -350,6 +393,9 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                     if(mainCharacter.getCurrentHFrame() == 3){
                         if(mainCharacter.getCurrentFrame() == 18){
                             Intent intent = new Intent(activity,GameOverActivity.class);
+                            makeSound(1);
+                            intent.putExtra("who",who);
+                            intent.putExtra("stage",stage);
                             activity.startActivity(intent);
                             playing = false;
                         }
@@ -476,6 +522,9 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                 if(mainCharacter.getCurrentHFrame() == 3){
                     if(mainCharacter.getCurrentFrame() == 18){
                         Intent intent = new Intent(activity,GameOverActivity.class);
+                        makeSound(1);
+                        intent.putExtra("who",who);
+                        intent.putExtra("stage",stage);
                         activity.startActivity(intent);
                         playing = false;
                     }
@@ -504,22 +553,6 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             progress.setCurrentHFrame(progress.getCurrentHFrame()+1);
         }
     }
-    /*public void die(){
-
-            mainCharacter.setCurrentHFrame(3);
-            mainCharacter.setCurrentFrame(0);
-            if (asdfg) {
-                mainCharacter.setCurrentHFrame(0);
-                asdfg = false;
-            }
-            if(mainCharacter.getCurrentHFrame() == 3){
-                if(mainCharacter.getCurrentFrame() == 18){
-                    Intent intent = new Intent(activity,GameOverActivity.class);
-                    activity.startActivity(intent);
-                    playing = false;
-                }
-            }
-    }*/
     public void drawGround(){
 
         if(forSecondGround){ // 초기 설정.
@@ -576,10 +609,22 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             }
     }
     private void setGame(int stage, int who){
+        this.stage = stage;
+        this.who = who;
+        currentStage = stage;
+        Log.d("asdfg","배경 : "+stage);
         switch (stage){
             case 1 :
                 background = new Background(c,R.drawable.metro2);
                 background2 = new Background(c,R.drawable.metro2);
+                break;
+            case 2 :
+                background = new Background(c,R.drawable.background2);
+                background2 = new Background(c,R.drawable.background2);
+                break;
+            case 3:
+                background = new Background(c,R.drawable.background3);
+                background2 = new Background(c,R.drawable.background3);
                 break;
         }
         if(who == 1){
@@ -637,4 +682,26 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             }
         return true;
     }
-}
+    private void makeSound(int i) {
+        int waitLimit = 1000;
+        int waitCounter = 0;
+        int throttle = 10;
+        if (optionJump) {
+                if (i == 0) {
+                    if (sound) {
+                        sp.play(intSoundCorrect, 1.0f, 1.0f, 0, 0, 1.0f);
+                        while (sp.play(intSoundCorrect, 1.f, 1.f, 1, 0, 1.f) == 0 && waitCounter < waitLimit) {
+                            waitCounter++;
+                            SystemClock.sleep(throttle);
+                        }
+                    }
+                } else {
+                    sp.play(intdead, 1.0f, 1.0f, 0, 0, 1.0f);
+                    while (sp.play(intdead, 1.f, 1.f, 1, 0, 1.f) == 0 && waitCounter < waitLimit) {
+                        waitCounter++;
+                        SystemClock.sleep(throttle);
+                    }
+                }
+            }
+        }
+    }

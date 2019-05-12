@@ -9,6 +9,7 @@ import android.view.Window;
 import android.widget.CheckBox;
 
 import com.example.shin.final_project.R;
+import com.example.shin.final_project.staticItem.cvs;
 
 public class OptionActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -24,11 +25,7 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
         deleteStatusBar();
 
         c1 = findViewById(R.id.c1);c1.setOnClickListener(this);
-        c2 = findViewById(R.id.c2);c2.setOnClickListener(this);
-        c3 = findViewById(R.id.c3);c3.setOnClickListener(this);
         c1.setChecked(c_1);
-        c2.setChecked(c_2);
-        c3.setChecked(c_3);
 
     }
 
@@ -68,13 +65,8 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.c1:
+                cvs.optionJump = !cvs.optionJump;
                 c_1 = !c_1;
-                break;
-            case R.id.c2:
-                c_2 = !c_2;
-                break;
-            case R.id.c3:
-                c_3 = !c_3;
                 break;
             default: break;
         }

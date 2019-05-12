@@ -1,11 +1,15 @@
 package com.example.shin.final_project.outgame;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.example.shin.final_project.DB.DatabaseHelper;
+import com.example.shin.final_project.DB.MyRecord;
+import com.example.shin.final_project.DB.MySQL;
 import com.example.shin.final_project.R;
 import com.example.shin.final_project.ingame.GameView;
 import com.example.shin.final_project.selectCharacter.SelectActivity;
@@ -14,12 +18,27 @@ import com.example.shin.final_project.staticItem.cvs;
 public class MainActivity extends AppCompatActivity {
     Intent intent;
     private GameView gameView;
+    DatabaseHelper dbHelper;
+    SQLiteDatabase database;
+    MyRecord record;
+
     //private GameView1 gameView1;
     public com.example.shin.final_project.staticItem.cvs cvs = new cvs();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        if(cvs.mainAcSet) {
+
+            DatabaseHelper dbHelper;
+            SQLiteDatabase database;
+            dbHelper = new DatabaseHelper(MainActivity.this, "MyRecord.db", null, 1);
+            database = dbHelper.getWritableDatabase();
+            cvs.stage = Integer.valueOf(dbHelper.openMax().score);
+            cvs.mainAcSet = false;
+        }
        // gameView = new GameView(this);
         deleteStatusBar();
     }
@@ -67,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void selectStage(View view) {
         intent = new Intent(this,StageActivity.class);
+        startActivity(intent);
+    }
+    public void goToDB(View view) {
+        intent = new Intent(this, MySQL.class);
         startActivity(intent);
     }
 }

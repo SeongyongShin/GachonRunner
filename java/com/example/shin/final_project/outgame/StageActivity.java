@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -29,13 +30,11 @@ public class StageActivity extends AppCompatActivity implements View.OnClickList
         s3 = findViewById(R.id.s3); s3.setOnClickListener(this);
         s4 = findViewById(R.id.s4); s4.setOnClickListener(this);
         m1 = findViewById(R.id.m1); m1.setOnClickListener(this);
+        Log.d("asdfg",""+cvs.currentStage);
         switch (cvs.stage){
-            case 1 : break;
-            case 2 : s2.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.btn_stage2));
-            break;
-            case 3 : s3.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.btn_stage3));
-            break;
             case 4 : s2.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.btn_stage4));
+            case 3 : s3.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.btn_stage3));
+            case 2 : s2.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.btn_stage2));
             break;
             default:break;
         }
@@ -65,7 +64,10 @@ public class StageActivity extends AppCompatActivity implements View.OnClickList
                 if(cvs.stage<2){
                     Toast.makeText(this,"이전 스테이지(stage1)를 먼저 클리어하십시오.",Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(this,"아직 구현되지 않았습니다.",Toast.LENGTH_SHORT).show();
+                    intent = new Intent(StageActivity.this,SelectActivity.class);
+                    intent.putExtra("stage",2);
+                    startActivity(intent);
+                    finish();
                 }
                 break;
             case R.id.s3:
