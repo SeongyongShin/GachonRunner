@@ -77,6 +77,7 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
                 DatabaseHelper dbHelper;
                 SQLiteDatabase database;
                 cvs.stage = 1;
+                cvs.currentStage = 1;
                 dbHelper = new DatabaseHelper(this, "MyRecord.db", null, 1);
                 database = dbHelper.getWritableDatabase();
                 dbHelper.delete_Table();
