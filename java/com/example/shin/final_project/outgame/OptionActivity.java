@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import com.example.shin.final_project.DB.DatabaseHelper;
 import com.example.shin.final_project.R;
@@ -75,10 +76,12 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.c2:
                 DatabaseHelper dbHelper;
                 SQLiteDatabase database;
+                cvs.stage = 1;
                 dbHelper = new DatabaseHelper(this, "MyRecord.db", null, 1);
                 database = dbHelper.getWritableDatabase();
                 dbHelper.delete_Table();
                 dbHelper.close();
+                Toast.makeText(getApplicationContext(),"초기화 되었습니다.",Toast.LENGTH_SHORT).show();
             default: break;
         }
     }
