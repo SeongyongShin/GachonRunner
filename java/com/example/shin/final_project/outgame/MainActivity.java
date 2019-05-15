@@ -39,13 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         if(cvs.mainAcSet) {
-
             DatabaseHelper dbHelper;
             SQLiteDatabase database;
             dbHelper = new DatabaseHelper(MainActivity.this, "MyRecord.db", null, 1);
             database = dbHelper.getWritableDatabase();
             cvs.stage = Integer.valueOf(dbHelper.openMax().score);
-            Log.d("fid",""+cvs.currentStage);
+            Log.d("fid",""+cvs.stage);
             cvs.mainAcSet = false;
         }
        // gameView = new GameView(this);

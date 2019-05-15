@@ -76,7 +76,7 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.c2:
                 DatabaseHelper dbHelper;
                 SQLiteDatabase database;
-                cvs.stage = 1;
+                cvs.stage = 0;
                 cvs.currentStage = 1;
                 dbHelper = new DatabaseHelper(this, "MyRecord.db", null, 1);
                 database = dbHelper.getWritableDatabase();

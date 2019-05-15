@@ -121,14 +121,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         MyRecord myRecord = new MyRecord();
         SQLiteDatabase db = getReadableDatabase();
         int max = 0;
+        int count = 0;
+        int p=0;
         // DB에 있는 데이터를 쉽게 처리하기 위해 Cursor를 사용하여 테이블에 있는 모든 데이터 출력
         Cursor cursor = db.rawQuery("SELECT * FROM RECORD", null);
         cursor.moveToFirst();
+        while (cursor.moveToNext()) {
+            count++;
+            Log.d("assd",""+count);
+        }
+        cursor.moveToFirst();
         try {
-            while (cursor.moveToNext()) {
+            while (p<=count) {
                 myRecord.score = cursor.getString(1);
+                Log.d("assd",""+cursor.getString(0)+"  "+myRecord.score);
+
                 if(max < Integer.valueOf(myRecord.score)){ max = Integer.valueOf(myRecord.score);}
-                Log.d("ass",""+max);
+
+                cursor.moveToNext();
+                p++;
             }
             db.close();
         }catch (Exception e){}

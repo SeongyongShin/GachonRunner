@@ -23,7 +23,21 @@ import com.example.shin.final_project.staticItem.cvs;
 import java.util.Random;
 
 import static com.example.shin.final_project.outgame.GameLayout.activity;
-import static com.example.shin.final_project.staticItem.cvs.*;
+import static com.example.shin.final_project.staticItem.cvs.backG;
+import static com.example.shin.final_project.staticItem.cvs.canvas;
+import static com.example.shin.final_project.staticItem.cvs.currentStage;
+import static com.example.shin.final_project.staticItem.cvs.cvsHeight;
+import static com.example.shin.final_project.staticItem.cvs.cvsWidth;
+import static com.example.shin.final_project.staticItem.cvs.deadLine;
+import static com.example.shin.final_project.staticItem.cvs.firstSet;
+import static com.example.shin.final_project.staticItem.cvs.isAtck;
+import static com.example.shin.final_project.staticItem.cvs.isBulletMoving;
+import static com.example.shin.final_project.staticItem.cvs.isCheck;
+import static com.example.shin.final_project.staticItem.cvs.isEnemyMoving;
+import static com.example.shin.final_project.staticItem.cvs.optionJump;
+import static com.example.shin.final_project.staticItem.cvs.ourHolder;
+import static com.example.shin.final_project.staticItem.cvs.startGround;
+import static com.example.shin.final_project.staticItem.cvs.startGround1;
 public  class GameView extends SurfaceView implements Runnable, View.OnClickListener{
     Button jumpBtn , atkBtn;
     TextView gameTime, t1,t2;
@@ -58,8 +72,11 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
     private boolean firstGroundSet = true;
     private boolean isCharacterset = true;
     private boolean sound = true;
+    private boolean touchStart = true;
+    private boolean allStop = false;
     public boolean forSecondGround = true;
     public boolean sibal = true;
+    public boolean sibal1 = true;
 
 
     private long thisTimeFrame;
@@ -198,13 +215,13 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         if(isBulletMoving){ makeBullet(); }
         if(startGround1){ if(ground.getXRight() < 0){startGround1 = false; }}
         if(mainCharacter.getYpos() > deadLine){
-            mainCharacter.setCurrentHFrame(3);
+            mainCharacter.setCurrentHFrame(2);
             mainCharacter.setCurrentFrame(0);
             if (asdfg) {
                 mainCharacter.setCurrentHFrame(0);
                 asdfg = false;
             }
-            if(mainCharacter.getCurrentHFrame() == 3){
+            if(mainCharacter.getCurrentHFrame() == 2){
                 if(mainCharacter.getCurrentFrame() == 18){
                     Intent intent = new Intent(activity,GameOverActivity.class);
                     makeSound(1);
@@ -225,7 +242,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         if(mainCharacter.isMoving()){
             if(time > mainCharacter.getLastFrameChangeTime() + mainCharacter.getFrameLengthInMillisecond()){
                 mainCharacter.setLastFrameChangeTime(time);
-                if(mainCharacter.isJumpcheck() && mainCharacter.getCurrentHFrame() != 3){
+                if(mainCharacter.isJumpcheck() && mainCharacter.getCurrentHFrame() != 2){
                     mainCharacter.setCurrentHFrame(1);
                 }else if(!mainCharacter.isJumpcheck() && mainCharacter.getCurrentHFrame() == 1){
                     mainCharacter.setCurrentHFrame(0);
@@ -237,32 +254,51 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                     mainCharacter.setCurrentFrame(0);
                 }
             }
+            if(mainCharacter.getCurrentHFrame() == 2 && mainCharacter.getCurrentFrame() == 18){
+                Intent intent = new Intent(activity,GameOverActivity.class);
+                makeSound(1);
+                intent.putExtra("who",who);
+                intent.putExtra("stage",stage);
+                activity.startActivity(intent);
+                playing = false;
+            }
         }
 
     }
 
     public void draw(){
-        if(ourHolder.getSurface().isValid()){
+        if(ourHolder.getSurface().isValid()) {
             canvas = ourHolder.lockCanvas(); // 그리기 전 캔버스를 잠근다.
-            canvas.drawColor(Color.WHITE);
+
             manageCurrentFrame();
+
+            canvas.drawColor(Color.WHITE);
             background.drawObj();
             background2.drawObj();
             progress.drawObj();
-            if(background2.isSecondcheck()){
-                background2.setwh(background.frameWidth,background.frameHeight);
+            if (background2.isSecondcheck()) {
+                background2.setwh(background.frameWidth, background.frameHeight);
                 background2.setSecondcheck(false);
             }
-            mainCharacter.drawObj();
-            if(startGround1){ground.drawObj();drawGround();}
-            else{drawGround();}
-            if(bullet != null ){bullet.drawObj();}
+
+            if (startGround1) {
+                ground.drawObj();
+                drawGround();
+            } else {
+                drawGround();
+            }
+            if (bullet != null) {
+                bullet.drawObj();
+            }
             //if(enemy1.isMoving()){enemy1.drawObj();}
-            enemy1.drawObj();
+            if(!allStop) {enemy1.drawObj();}
+
+            mainCharacter.drawObj();
             //Log.d("asg","캐릭 YBottom : " + mainCharacter.getYBottom() + " 땅 Y : " + ground4.getYpos());
             //for(int i=0;i<5;i++){grounds.get(i).drawObj();}
             ourHolder.unlockCanvasAndPost(canvas); // 잠금을 풀면 캔버스가 그려진다.
         }
+
     }
     public void pause(){
         playing = false;
@@ -279,22 +315,28 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
 
    @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction() & MotionEvent.ACTION_MASK){
-            case MotionEvent.ACTION_DOWN :
-                //threadStart();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        t1 = gameLayout.t1;
-                        t2 = gameLayout.t2;
-                        t1.setVisibility(View.INVISIBLE);
-                        t2.setVisibility(View.INVISIBLE);
-                    }
-                }).start();
-                if(startGame) {gameThread.start(); startGame = false;}
-                //horse1.setJumpcheck(true);
-                break;
-        }
+       if (touchStart){
+           switch (event.getAction() & MotionEvent.ACTION_MASK) {
+               case MotionEvent.ACTION_DOWN:
+                   //threadStart();
+                   new Thread(new Runnable() {
+                       @Override
+                       public void run() {
+                           t1 = gameLayout.t1;
+                           t2 = gameLayout.t2;
+                           t1.setVisibility(View.INVISIBLE);
+                           t2.setVisibility(View.INVISIBLE);
+                       }
+                   }).start();
+                   if (startGame) {
+                       gameThread.start();
+                       startGame = false;
+                   }
+                   //horse1.setJumpcheck(true);
+                   break;
+           }
+
+   }
         return true;
     }
     @Override
@@ -318,21 +360,23 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             }
         }
     }
-    public void makeBackGround(){
-        //배경
-        if(background.isFirstcheck()){
-            background.setXpos(background.getXpos() - (float) 100);
-            background2.setXpos(background.frameWidth + background.getXpos());
-            if(background.frameWidth + background.getXpos() <= 0) {
-                background.setXpos(background2.getXpos() + background2.frameWidth);
-                background.setFirstcheck(false);
-            }
-        }else{
-            background2.setXpos(background2.getXpos() - (float) 100);
-            background.setXpos(background2.frameWidth + background2.getXpos());
-            if(background2.frameWidth + background2.getXpos() <= 0) {
-                background2.setXpos(background.getXpos() + background.frameWidth);
-                background.setFirstcheck(true);
+    public void makeBackGround() {
+        if (!allStop) {
+            //배경
+            if (background.isFirstcheck()) {
+                background.setXpos(background.getXpos() - background.getRunSpeed());
+                background2.setXpos(background.frameWidth + background.getXpos());
+                if (background.frameWidth + background.getXpos() <= 0) {
+                    background.setXpos(background2.getXpos() + background2.frameWidth);
+                    background.setFirstcheck(false);
+                }
+            } else {
+                background2.setXpos(background2.getXpos() - background2.getRunSpeed());
+                background.setXpos(background2.frameWidth + background2.getXpos());
+                if (background2.frameWidth + background2.getXpos() <= 0) {
+                    background2.setXpos(background.getXpos() + background.frameWidth);
+                    background.setFirstcheck(true);
+                }
             }
         }
     }
@@ -358,78 +402,88 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             }
         }
         //캐릭터 점프체크
-        if(mainCharacter.isJumpcheck()){
-            if(optionJump) {makeSound(0); sound = false;}
-            if(isCheck) {
-                if(mainCharacter.isJumping()) {
-                    mainCharacter.setCurrentHeight(mainCharacter.getYpos()+60);
-                    mainCharacter.setJumping(false);
-                }
-                mainCharacter.setYpos(mainCharacter.getYpos() - mainCharacter.getJumpSpeed() / fps);
-                if(mainCharacter.getYBottom()< mainCharacter.getCurrentHeight()){
-                    isCheck = false;
-                }
-            }else{
-                mainCharacter.setYpos(mainCharacter.getYpos() + mainCharacter.getJumpSpeed()/fps);
-                if(ground4.getYpos() - mainCharacter.getYBottom() < 27 &&  ground4.getYpos() - mainCharacter.getYBottom() > -27){
-
-                    isCheck = true;
-                    mainCharacter.setJumpcheck(false);
-                    mainCharacter.setYBottom(ground4.getYpos());
-                    mainCharacter.setYpos(ground4.getYpos()-mainCharacter.getFrameHeight());
-                    mainCharacter.setJumping(true);
-                    sound = true;
-                }else if(mainCharacter.getYBottom() > ground4.getYpos()){
-
-
-                    mainCharacter.setJumpcheck(false);
-
-                    mainCharacter.setCurrentHFrame(3);
-                    mainCharacter.setCurrentFrame(0);
-                    if (asdfg) {
-                        mainCharacter.setCurrentHFrame(0);
-                        asdfg = false;
+        if(mainCharacter.isJumpcheck()) {
+            if (optionJump) {
+                makeSound(0);
+                sound = false;
+            }
+            if (!allStop) {
+                if (isCheck) {
+                    if (mainCharacter.isJumping()) {
+                        mainCharacter.setCurrentHeight(mainCharacter.getYpos() + 60);
+                        mainCharacter.setJumping(false);
                     }
-                    if(mainCharacter.getCurrentHFrame() == 3){
-                        if(mainCharacter.getCurrentFrame() == 18){
-                            Intent intent = new Intent(activity,GameOverActivity.class);
-                            makeSound(1);
-                            intent.putExtra("who",who);
-                            intent.putExtra("stage",stage);
-                            activity.startActivity(intent);
-                            playing = false;
+                    mainCharacter.setYpos(mainCharacter.getYpos() - mainCharacter.getJumpSpeed() / fps);
+                    if (mainCharacter.getYBottom() < mainCharacter.getCurrentHeight()) {
+                        isCheck = false;
+                    }
+                } else {
+                    mainCharacter.setYpos(mainCharacter.getYpos() + mainCharacter.getJumpSpeed() / fps);
+                    if (ground4.getYpos() - mainCharacter.getYBottom() < 27 && ground4.getYpos() - mainCharacter.getYBottom() > -27) {
+
+                        isCheck = true;
+                        mainCharacter.setJumpcheck(false);
+                        mainCharacter.setYBottom(ground4.getYpos());
+                        mainCharacter.setYpos(ground4.getYpos() - mainCharacter.getFrameHeight());
+                        mainCharacter.setJumping(true);
+                        sound = true;
+                    } else if (mainCharacter.getYBottom() > ground4.getYpos()) {
+
+
+                        mainCharacter.setJumpcheck(false);
+
+                        mainCharacter.setCurrentHFrame(2);
+
+                        allStop = true;
+                        Log.d("here", "1");
+
+                        mainCharacter.setCurrentFrame(0);
+                        if (asdfg) {
+                            mainCharacter.setCurrentHFrame(0);
+                            asdfg = false;
+                        }
+                        if (mainCharacter.getCurrentHFrame() == 2) {
+                            if (mainCharacter.getCurrentFrame() == 18) {
+                                Intent intent = new Intent(activity, GameOverActivity.class);
+                                makeSound(1);
+                                intent.putExtra("who", who);
+                                intent.putExtra("stage", stage);
+                                activity.startActivity(intent);
+                                playing = false;
+                            }
                         }
                     }
                 }
             }
         }
     }
-    public void makeGround(){
+    public void makeGround() {
         //시작 땅\
         if (startGround1) {
-            ground.setXpos(ground.getXpos() - (float)ground.getRunSpeed());
-           // if((ground.getXpos() + ground.getWidth())<=0) startGround1 = false;
+            ground.setXpos(ground.getXpos() - (float) ground.getRunSpeed());
+            // if((ground.getXpos() + ground.getWidth())<=0) startGround1 = false;
         }
 
+        if(!allStop) {
         // 이후 땅.
         if (ground1[0].isMoving()) {
             //------------------------------------------------------------------------
-            ground1[0].setXpos(ground1[0].getXpos() - (float)ground1[0].getRunSpeed());
-            ground1[0].setXRight(ground1[0].getXpos()+ground1[0].frameWidth);
-            for(int i=1;i<10;i++){
-                ground1[i].setXpos(ground1[i-1].getXRight());
-                ground1[i].setXRight(ground1[i].getXpos()+ground1[i].frameWidth);
+            ground1[0].setXpos(ground1[0].getXpos() - (float) ground1[0].getRunSpeed());
+            ground1[0].setXRight(ground1[0].getXpos() + ground1[0].frameWidth);
+            for (int i = 1; i < 10; i++) {
+                ground1[i].setXpos(ground1[i - 1].getXRight());
+                ground1[i].setXRight(ground1[i].getXpos() + ground1[i].frameWidth);
             }
             //------------------------------------------------------------------------
-            ground2[0].setXpos(ground2[0].getXpos() - (float)ground1[0].getRunSpeed());
-            ground2[0].setXRight(ground2[0].getXpos()+ground2[0].frameWidth);
-            for(int i=1;i<10;i++){
-                ground2[i].setXpos(ground2[i-1].getXRight());
-                ground2[i].setXRight(ground2[i].getXpos()+ground2[i].frameWidth);
+            ground2[0].setXpos(ground2[0].getXpos() - (float) ground1[0].getRunSpeed());
+            ground2[0].setXRight(ground2[0].getXpos() + ground2[0].frameWidth);
+            for (int i = 1; i < 10; i++) {
+                ground2[i].setXpos(ground2[i - 1].getXRight());
+                ground2[i].setXRight(ground2[i].getXpos() + ground2[i].frameWidth);
             }
             //------------------------------------------------------------------------
         }
-        if(startGround1 == false) {
+        if (startGround1 == false) {
             if (ground1[9].getXRight() < 0) {
                 ground1[0].setXpos(ground2[9].getXRight());
                 groundMoving = true;
@@ -441,6 +495,7 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                 createGroundPattern();
             }
         }
+    }
     }
     public void createGroundPattern(){
 
@@ -513,13 +568,18 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
             if(enemy1 != null &&(enemy1.getXpos()<mainCharacter.getXRight())){
                 enemy1.setXpos(cvsWidth - enemy1.getFrameWidth());
 
-                mainCharacter.setCurrentHFrame(3);
+                mainCharacter.setCurrentHFrame(2);
+
+                if(sibal1) {
+                    Log.d("here", "2");
+                    sibal1 = false;
+                }else{allStop = true;}
                 mainCharacter.setCurrentFrame(0);
                 if (asdfg) {
                     mainCharacter.setCurrentHFrame(0);
                     asdfg = false;
                 }
-                if(mainCharacter.getCurrentHFrame() == 3){
+                if(mainCharacter.getCurrentHFrame() == 2){
                     if(mainCharacter.getCurrentFrame() == 18){
                         Intent intent = new Intent(activity,GameOverActivity.class);
                         makeSound(1);
@@ -549,8 +609,10 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
 
     }
     public void makeProgress(){
-        if(timecount%3 == 0){
-            progress.setCurrentHFrame(progress.getCurrentHFrame()+1);
+        if(!allStop) {
+            if (timecount % 3 == 0) {
+                progress.setCurrentHFrame(progress.getCurrentHFrame() + 1);
+            }
         }
     }
     public void drawGround(){
@@ -628,9 +690,9 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
                 break;
         }
         if(who == 1){
-            mainCharacter = new CharacterObject(c,R.drawable.shin1);
+            mainCharacter = new CharacterObject(c,R.drawable.shin_final);
         }else{
-            mainCharacter = new CharacterObject(c,R.drawable.kim1);
+            mainCharacter = new CharacterObject(c,R.drawable.kim_final);
         }
     }
     private void firstGroundSetting(){
@@ -644,43 +706,43 @@ public  class GameView extends SurfaceView implements Runnable, View.OnClickList
         ground1[6].setYpos(ground.getYpos());
 
     }
-    private boolean isCharacterOnGround(){
-        if(isCharacterset) {
-            characterX = mainCharacter.getXpos() + mainCharacter.getFrameWidth() / 2;
-            characterY = mainCharacter.getYBottom();
-        }
-            for(int i=0;i<10;i++){
+    private boolean isCharacterOnGround() {
+        if(!allStop) {
 
-                if(ground1[i].getXpos()<characterX && ground1[i].getXRight()>characterX) { // 머리박았을때.
-                    if (ground1[i].getYpos() < characterY || ground1[i].getYBottom() < characterY){
+            if (isCharacterset) {
+                characterX = mainCharacter.getXpos() + mainCharacter.getFrameWidth() / 2;
+                characterY = mainCharacter.getYBottom();
+            }
+            for (int i = 0; i < 10; i++) {
+
+                if (ground1[i].getXpos() < characterX && ground1[i].getXRight() > characterX) { // 머리박았을때.
+                    if (ground1[i].getYpos() < characterY || ground1[i].getYBottom() < characterY) {
                         ground4 = ground1[i];
                         return false;
-                    }else if(ground1[i].getYpos() > characterY && ground1[i].getYpos() - 27 > characterY){ // 낭떠러지
+                    } else if (ground1[i].getYpos() > characterY && ground1[i].getYpos() - 27 > characterY) { // 낭떠러지
                         ground4 = ground1[i];
                         return false;
-                    }
-                    else{
+                    } else {
                         ground4 = ground1[i];
                         return true;
                     }
-                }
-
-                else if(ground2[i].getXpos()<characterX && ground2[i].getXRight()>characterX) {
-                    if (ground2[i].getYpos() < characterY || ground2[i].getYBottom() < characterY){
+                } else if (ground2[i].getXpos() < characterX && ground2[i].getXRight() > characterX) {
+                    if (ground2[i].getYpos() < characterY || ground2[i].getYBottom() < characterY) {
                         ground4 = ground2[i];
                         return false;
-                    }else if(ground2[i].getYpos() > characterY && ground2[i].getYpos()+10 > characterY){
+                    } else if (ground2[i].getYpos() > characterY && ground2[i].getYpos() + 10 > characterY) {
                         ground4 = ground2[i];
                         return false;
-                    }
-                    else{
+                    } else {
                         ground4 = ground2[i];
                         return true;
                     }
                 }
 
             }
+        }
         return true;
+
     }
     private void makeSound(int i) {
         int waitLimit = 1000;

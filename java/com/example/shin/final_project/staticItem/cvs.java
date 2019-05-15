@@ -21,7 +21,7 @@ public class cvs {
     public static int cvsWidth;
     public static int cvsHeight;
     public static int percent = 8;
-    public static int stage = 1;
+    public static int stage = 0;
     public static int currentStage = 1;
 
     public static int nowMade = 3;
