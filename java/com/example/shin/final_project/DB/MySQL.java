@@ -3,6 +3,7 @@ package com.example.shin.final_project.DB;
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,8 +34,10 @@ public class MySQL extends AppCompatActivity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        deleteStatusBar();
         setContentView(R.layout.activity_mysql);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        deleteStatusBar();
+
         Mactivity = MySQL.this;
         myscore = findViewById(R.id.myscore);
         save = findViewById(R.id.saveButton);save.setOnClickListener(this);

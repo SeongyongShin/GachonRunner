@@ -1,6 +1,7 @@
 package com.example.shin.final_project.DB;
 
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ public class RankActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
         deleteStatusBar();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         img = findViewById(R.id.img2);
         tv = findViewById(R.id.rankBoard);
         button = findViewById(R.id.m0);button.setOnClickListener(this);

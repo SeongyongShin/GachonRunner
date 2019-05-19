@@ -1,6 +1,7 @@
 package com.example.shin.final_project.outgame;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_option);
         deleteStatusBar();
 
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         c1 = findViewById(R.id.c1);c1.setOnClickListener(this);
         c2 = findViewById(R.id.c2);c2.setOnClickListener(this);
         c1.setChecked(c_1);

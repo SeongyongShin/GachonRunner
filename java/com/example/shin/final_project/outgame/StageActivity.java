@@ -2,6 +2,7 @@ package com.example.shin.final_project.outgame;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -24,6 +25,7 @@ public class StageActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
         deleteStatusBar();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         Context context = getApplicationContext();
         s1 = findViewById(R.id.s1); s1.setOnClickListener(this);
         s2 = findViewById(R.id.s2); s2.setOnClickListener(this);

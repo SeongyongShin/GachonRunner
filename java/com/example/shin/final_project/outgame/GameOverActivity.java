@@ -1,6 +1,7 @@
 package com.example.shin.final_project.outgame;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ public class GameOverActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over);
         deleteStatusBar();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         goToMenu = findViewById(R.id.goToMenu1); goToMenu.setOnClickListener(this);
         retry = findViewById(R.id.retry); retry.setOnClickListener(this);
     }
