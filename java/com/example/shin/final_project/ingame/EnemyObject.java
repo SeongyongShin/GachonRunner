@@ -48,8 +48,8 @@ public class EnemyObject extends SurfaceView{
 
         framecount = 10;
         firstcheck = false;
-        frameWidth = cvsHeight/2;
-        frameHeight = cvsHeight/2;
+        frameWidth = cvsHeight/3;
+        frameHeight = cvsHeight/3;
         Xpos = cvsWidth;
         Ypos = cvsHeight - frameHeight - cvsHeight/5;
         obj = Bitmap.createScaledBitmap(obj,frameWidth * framecount ,frameHeight,false);

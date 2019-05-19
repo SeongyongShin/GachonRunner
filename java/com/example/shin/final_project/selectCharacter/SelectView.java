@@ -99,6 +99,7 @@ public class SelectView extends SurfaceView implements Runnable{
                     if (event.getX() < cvsWidth / 2) {
                         mainCharacter.setFramecount(20);
                         mainCharacter.setCurrentHFrame(1);
+                        mainCharacter.setCurrentFrame(0);
                         mainCharacter.getH();
                         new Thread(new Runnable() {
                             @Override
@@ -118,6 +119,7 @@ public class SelectView extends SurfaceView implements Runnable{
                         }).start();
                     } else {
                         mainCharacter1.setCurrentHFrame(1);
+                        mainCharacter1.setCurrentFrame(0);
                         mainCharacter1.getH();
                         new Thread(new Runnable() {
                             @Override
