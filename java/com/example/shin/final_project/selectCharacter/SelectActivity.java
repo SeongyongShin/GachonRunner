@@ -3,6 +3,7 @@ package com.example.shin.final_project.selectCharacter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -27,6 +28,7 @@ public class SelectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
         deleteStatusBar();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         Context context = this;
         Sactivity = SelectActivity.this;
         shin =findViewById(R.id.shin);

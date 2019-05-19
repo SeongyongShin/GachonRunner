@@ -1,6 +1,7 @@
 package com.example.shin.final_project.outgame;
 
 import android.app.Activity;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ public class LoadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         activity1 = LoadingActivity.this;
         deleteStatusBar();
     }

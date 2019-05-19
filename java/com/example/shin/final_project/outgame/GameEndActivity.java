@@ -1,6 +1,7 @@
 package com.example.shin.final_project.outgame;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,7 @@ public class GameEndActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_end);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         deleteStatusBar();
         gameEnd = findViewById(R.id.endText);
         goToMenu = findViewById(R.id.goToMenu); goToMenu.setOnClickListener(this);

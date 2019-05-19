@@ -45,11 +45,13 @@ public class EnemyObject extends SurfaceView{
         canvas.drawBitmap(obj,frameToDraw,whereToDraw,null);
     }
     public void getH(){
-        Ypos = cvsHeight - frameHeight - cvsHeight/5;
+
         framecount = 10;
         firstcheck = false;
-        frameWidth = cvsWidth/10;
-        Xpos = cvsWidth-frameWidth;
+        frameWidth = cvsHeight/2;
+        frameHeight = cvsHeight/2;
+        Xpos = cvsWidth;
+        Ypos = cvsHeight - frameHeight - cvsHeight/5;
         obj = Bitmap.createScaledBitmap(obj,frameWidth * framecount ,frameHeight,false);
     }
 
