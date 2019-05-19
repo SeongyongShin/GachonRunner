@@ -45,7 +45,7 @@ public class MySQL extends AppCompatActivity implements View.OnClickListener{
         alpha.setAlpha(100);
 
         Toast.makeText(getApplicationContext(),"이름을 입력하세요",Toast.LENGTH_SHORT).show();
-        myscore.setText("Stage : "+ (cvs.currentStage));
+        myscore.setText("Stage : "+ (cvs.sqlStage));
         dbHelper = new DatabaseHelper(MySQL.this, "MyRecord.db", null, version);
         database = dbHelper.getWritableDatabase();
 
@@ -58,14 +58,14 @@ public class MySQL extends AppCompatActivity implements View.OnClickListener{
         if(str == ""){
             Toast.makeText(getApplicationContext(),"이름을 입력하세요",Toast.LENGTH_SHORT).show();
         }else {
-                dbHelper.insert(str, String.valueOf((cvs.currentStage)));
-            Toast.makeText(getApplicationContext(),"저장되었습니다\n"+str + "  "+(cvs.currentStage*1000) + " 점 ",Toast.LENGTH_SHORT).show();
+                dbHelper.insert(str, String.valueOf((cvs.sqlStage)));
+            Toast.makeText(getApplicationContext(),"저장되었습니다\n"+str + "  "+(cvs.sqlStage*1000) + " 점 ",Toast.LENGTH_SHORT).show();
                 //myscore.setText(dbHelper.open(str).name+"\n"+(cvs.stage - 1));
                 //Log.d("ass","Record.score : " + dbHelper.open(str).score);
             dbHelper.getResult();
             try {
                 Log.d("getparam",str);
-                sendResult = new SendResult(str,Integer.valueOf(cvs.currentStage));
+                sendResult = new SendResult(str,Integer.valueOf(cvs.sqlStage));
             } catch (Exception e) {
                 e.printStackTrace();
             }

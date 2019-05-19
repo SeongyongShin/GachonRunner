@@ -22,6 +22,7 @@ public class SelectView extends SurfaceView implements Runnable{
     private float fps;
     long startFrameTime;
     private boolean playing = true;
+    boolean isSelected = false;
     int who, stage;
     Intent intent;
     public SelectView(Context context , int stage) {
@@ -92,50 +93,53 @@ public class SelectView extends SurfaceView implements Runnable{
         }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction() & MotionEvent.ACTION_MASK){
-            case MotionEvent.ACTION_DOWN :
-               if(event.getX() < cvsWidth/2){
-                   mainCharacter.setFramecount(20);
-                   mainCharacter.setCurrentHFrame(1);
-                   mainCharacter.getH();
-                   new Thread(new Runnable() {
-                       @Override
-                       public void run() {
-                           try {
-                               Thread.sleep(2000);
-                           } catch (InterruptedException e) {
-                               e.printStackTrace();
-                           }
-                           intent = new Intent(Sactivity, GameLayout.class);
-                           intent.putExtra("who",1);
-                           intent.putExtra("stage",stage);
-                           playing = false;
-                           Sactivity.startActivity(intent);
-                           Sactivity.finish();
-                       }
-                   }).start();
-               }else{
-                   mainCharacter1.setCurrentHFrame(1);
-                   mainCharacter1.getH();
-                   new Thread(new Runnable() {
-                       @Override
-                       public void run() {
-                           try {
-                               Thread.sleep(2000);
-                           } catch (InterruptedException e) {
-                               e.printStackTrace();
-                           }
-                           intent = new Intent(Sactivity, GameLayout.class);
-                           intent.putExtra("who",2);
-                           intent.putExtra("stage",stage);
-                           playing = false;
-                           Sactivity.startActivity(intent);
-                           Sactivity.finish();
-                       }
-                   }).start();
-               }
-                break;
-        }
+        if (!isSelected){
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_DOWN:
+                    if (event.getX() < cvsWidth / 2) {
+                        mainCharacter.setFramecount(20);
+                        mainCharacter.setCurrentHFrame(1);
+                        mainCharacter.getH();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(2000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                intent = new Intent(Sactivity, GameLayout.class);
+                                intent.putExtra("who", 1);
+                                intent.putExtra("stage", stage);
+                                playing = false;
+                                Sactivity.startActivity(intent);
+                                Sactivity.finish();
+                            }
+                        }).start();
+                    } else {
+                        mainCharacter1.setCurrentHFrame(1);
+                        mainCharacter1.getH();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(2000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                intent = new Intent(Sactivity, GameLayout.class);
+                                intent.putExtra("who", 2);
+                                intent.putExtra("stage", stage);
+                                playing = false;
+                                Sactivity.startActivity(intent);
+                                Sactivity.finish();
+                            }
+                        }).start();
+                    }
+                    break;
+            }
+            isSelected = true;
+    }
         return true;
     }
 

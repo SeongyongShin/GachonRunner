@@ -16,6 +16,7 @@ import com.example.shin.final_project.ingame.GameView;
 
 import static com.example.shin.final_project.outgame.LoadingActivity.activity1;
 import static com.example.shin.final_project.staticItem.cvs.backG;
+import static com.example.shin.final_project.staticItem.cvs.isWaiting;
 import static com.example.shin.final_project.staticItem.cvs.startGround;
 import static com.example.shin.final_project.staticItem.cvs.startGround1;
 
@@ -128,6 +129,7 @@ public class GameLayout extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 activity1.finish();
+                isWaiting = true;
             }
         }).start();
     }

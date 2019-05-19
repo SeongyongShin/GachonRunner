@@ -16,13 +16,14 @@ public class cvs {
     public static boolean isEnemyMoving = true;
     public static boolean mainAcSet = true;
     public static boolean optionJump = true;
-
+    public static boolean isWaiting = true;
     public static float deadLine;
     public static int cvsWidth;
     public static int cvsHeight;
     public static int percent = 8;
-    public static int stage = 1;
+    public static int stage = 0;
     public static int currentStage = 1;
+    public static int sqlStage;
 
     public static int nowMade = 3;
 
