@@ -108,6 +108,7 @@ public class GameView extends SurfaceView implements Runnable, View.OnClickListe
         }
         //------------------------------------------------------------------------
         enemy1 = new EnemyObject(c, R.drawable.enemy14);
+        setEnemy();
         progress = new Progress(c, R.drawable.progress);
         this.currentStage1 = GameLayout.currentStage;
         /*for(int i=0;i<5;i++) {
@@ -738,8 +739,8 @@ public class GameView extends SurfaceView implements Runnable, View.OnClickListe
             mainCharacter = new CharacterObject(c, R.drawable.kim_final);
         }
 
-        background.setRunSpeed(k + stage);
-        ground.setRunSpeed(k + stage);
+        background.setRunSpeed(k + 2*stage);
+        ground.setRunSpeed(k + 2*stage);
     }
 
     private void firstGroundSetting() {
