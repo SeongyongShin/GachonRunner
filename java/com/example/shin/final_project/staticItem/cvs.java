@@ -17,6 +17,8 @@ public class cvs {
     public static boolean mainAcSet = true;
     public static boolean optionJump = true;
     public static boolean isWaiting = true;
+    public static boolean bgm1 = true;
+    public static boolean bgm2 = true;
     public static float deadLine;
     public static int cvsWidth;
     public static int cvsHeight;

@@ -1,5 +1,6 @@
 package com.example.shin.final_project.outgame;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -18,6 +19,7 @@ import com.example.shin.final_project.DB.RankActivity;
 import com.example.shin.final_project.R;
 import com.example.shin.final_project.ingame.GameView;
 import com.example.shin.final_project.selectCharacter.SelectActivity;
+import com.example.shin.final_project.staticItem.BgmClass;
 import com.example.shin.final_project.staticItem.cvs;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
     MyRecord record;
     LinearLayout img;
 
-    //private GameView1 gameView1;
     public com.example.shin.final_project.staticItem.cvs cvs = new cvs();
+    public static com.example.shin.final_project.staticItem.BgmClass bgmClass = new BgmClass();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +40,7 @@ public class MainActivity extends AppCompatActivity {
         img = findViewById(R.id.ml);
         Drawable alpha = img.getBackground();
         alpha.setAlpha(200);
-
-
+        Context context = getApplicationContext();
         if(cvs.mainAcSet) {
             DatabaseHelper dbHelper;
             SQLiteDatabase database;
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         }
        // gameView = new GameView(this);
         deleteStatusBar();
+        bgmClass.BgmClass1(context);
+        bgmClass.playbgm();
+
     }
 
     @Override
@@ -67,6 +71,10 @@ public class MainActivity extends AppCompatActivity {
       //  gameView.pause();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
 
     public void startGame(View view) {
         Intent intent = new Intent(MainActivity.this,SelectActivity.class);
@@ -107,4 +115,5 @@ public class MainActivity extends AppCompatActivity {
         intent = new Intent(this, RankActivity.class);
         startActivity(intent);
     }
+
 }

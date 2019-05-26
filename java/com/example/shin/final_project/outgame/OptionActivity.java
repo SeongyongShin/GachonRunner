@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.shin.final_project.DB.DatabaseHelper;
 import com.example.shin.final_project.R;
+import com.example.shin.final_project.staticItem.BgmClass;
 import com.example.shin.final_project.staticItem.cvs;
 
 public class OptionActivity extends AppCompatActivity implements View.OnClickListener{
@@ -31,7 +32,9 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         c1 = findViewById(R.id.c1);c1.setOnClickListener(this);
         c2 = findViewById(R.id.c2);c2.setOnClickListener(this);
+        c3 = findViewById(R.id.c3);c3.setOnClickListener(this);
         c1.setChecked(c_1);
+        c3.setChecked(c_3);
         c2.setChecked(true);
 
     }
@@ -86,7 +89,22 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
                 dbHelper.delete_Table();
                 dbHelper.close();
                 Toast.makeText(getApplicationContext(),"초기화 되었습니다.",Toast.LENGTH_SHORT).show();
-            default: break;
+                break;
+            case R.id.c3:
+                c_3 = !c_3;
+                if(c3.isChecked() == false){
+                    BgmClass.mpPlay = false;
+                    BgmClass.isPlaying = false;
+                    BgmClass.stopbgm();
+                }else{
+                    BgmClass.mpPlay = true;
+                    BgmClass.isPlaying = true;
+                    BgmClass.playbgm();
+                }
+                break;
+            default:
+
+                break;
         }
     }
 }
